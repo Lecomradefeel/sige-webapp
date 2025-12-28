@@ -3,7 +3,7 @@ type FeaturedItem = {
   title: string;
   excerpt?: string | null;
   priority: number;
-  link?: string | null;
+  link?: string | null; // <-- link è una stringa nel tuo schema
 };
 
 async function getFeatured(): Promise<FeaturedItem[]> {
@@ -32,43 +32,14 @@ async function getFeatured(): Promise<FeaturedItem[]> {
     } as any
   );
 
-  const json = await res.json();
+  const json: any = await res.json();
 
-  if (!res.ok || json.errors) {
-    console.error("DatoCMS error:", json.errors);
+  if (!res.ok || json?.errors) {
+    console.error("DatoCMS error:", json?.errors);
     return [];
   }
 
-  return json?.data?.allFeatureds ?? [];
-}
-
-const res = await fetch(
-  "https://graphql.datocms.com/",
-  {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${process.env.DATOCMS_API_TOKEN}`,
-    },
-    body: JSON.stringify({ query }),
-    cache: "no-store",
-  } as any
-);
-
-  const json = await res.json();
-
-console.log("TOKEN_PRESENT", Boolean(process.env.DATOCMS_API_TOKEN));
-console.log("STATUS", res.status);
-console.log("DATOCMS_ERRORS", json.errors ?? null);
-console.log("COUNT", json?.data?.allFeatureds?.length ?? 0);
-
-
-  if (!res.ok || json.errors) {
-    console.error("DatoCMS error:", json.errors);
-    return [];
-  }
-
-  return json?.data?.allFeatureds ?? [];
+  return (json?.data?.allFeatureds as FeaturedItem[]) ?? [];
 }
 
 function SafeText({ children }: { children?: string | null }) {
@@ -79,9 +50,7 @@ export default async function Home() {
   const featured = await getFeatured();
 
   const main = featured.find((f) => f.priority === 1) ?? featured[0];
-  const secondary = featured
-    .filter((f) => (main ? f !== main : true))
-    .slice(0, 2);
+  const secondary = featured.filter((f) => f !== main).slice(0, 2);
 
   return (
     <main style={{ maxWidth: 1120, margin: "0 auto", padding: "32px 20px" }}>
@@ -123,7 +92,7 @@ export default async function Home() {
             gap: 20,
           }}
         >
-          {/* CARD PRINCIPALE (priority=1) */}
+          {/* CARD PRINCIPALE */}
           <article
             style={{
               padding: 28,
@@ -136,22 +105,17 @@ export default async function Home() {
             </div>
 
             <h3 style={{ fontSize: 30, margin: "12px 0" }}>
-              <SafeText>
-                {main?.title ?? "Crea 3 record Featured su DatoCMS"}
-              </SafeText>
+              <SafeText>{main?.title ?? "Nessun contenuto trovato"}</SafeText>
             </h3>
 
             <p style={{ maxWidth: 560 }}>
-              <SafeText>
-                {main?.excerpt ??
-                  "DatoCMS → Content → Featured: crea 3 record con priority 1, 2 e 3 e pubblicali."}
-              </SafeText>
+              <SafeText>{main?.excerpt ?? ""}</SafeText>
             </p>
 
-            {main?.link?.url ? (
+            {main?.link ? (
               <div style={{ marginTop: 14 }}>
                 <a
-                  href={main.link.url}
+                  href={main.link}
                   style={{
                     display: "inline-block",
                     padding: "10px 14px",
@@ -168,84 +132,51 @@ export default async function Home() {
             ) : null}
           </article>
 
-          {/* CARD SECONDARIE (priority=2 e 3) */}
+          {/* CARD SECONDARIE */}
           <div style={{ display: "grid", gap: 20 }}>
-            {secondary.length === 2 ? (
-              secondary.map((item) => (
-                <article
-                  key={item.priority}
-                  style={{
-                    padding: 20,
-                    borderRadius: 22,
-                    border: "1px solid rgba(255,255,255,0.15)",
-                  }}
-                >
-                  <div style={{ fontSize: 12, opacity: 0.6 }}>
-                    <SafeText>{item.label ?? "EVENTO"}</SafeText>
-                  </div>
+            {secondary.map((item) => (
+              <article
+                key={item.priority}
+                style={{
+                  padding: 20,
+                  borderRadius: 22,
+                  border: "1px solid rgba(255,255,255,0.15)",
+                }}
+              >
+                <div style={{ fontSize: 12, opacity: 0.6 }}>
+                  <SafeText>{item.label ?? "IN EVIDENZA"}</SafeText>
+                </div>
 
-                  <strong>
-                    <SafeText>{item.title}</SafeText>
-                  </strong>
+                <strong>
+                  <SafeText>{item.title}</SafeText>
+                </strong>
 
-                  {item.excerpt ? (
-                    <div style={{ fontSize: 14, opacity: 0.8, marginTop: 6 }}>
-                      <SafeText>{item.excerpt}</SafeText>
-                    </div>
-                  ) : null}
-
-                  {item.link?.url ? (
-                    <div style={{ marginTop: 10 }}>
-                      <a
-                        href={item.link.url}
-                        style={{
-                          color: "#fff",
-                          textDecoration: "none",
-                          fontWeight: 800,
-                          opacity: 0.9,
-                        }}
-                      >
-                        Apri →
-                      </a>
-                    </div>
-                  ) : null}
-                </article>
-              ))
-            ) : (
-              <>
-                <article
-                  style={{
-                    padding: 20,
-                    borderRadius: 22,
-                    border: "1px solid rgba(255,255,255,0.15)",
-                  }}
-                >
-                  <div style={{ fontSize: 12, opacity: 0.6 }}>EVENTO</div>
-                  <strong>Crea un record Featured con priority = 2</strong>
+                {item.excerpt ? (
                   <div style={{ fontSize: 14, opacity: 0.8, marginTop: 6 }}>
-                    Pubblicalo su DatoCMS.
+                    <SafeText>{item.excerpt}</SafeText>
                   </div>
-                </article>
+                ) : null}
 
-                <article
-                  style={{
-                    padding: 20,
-                    borderRadius: 22,
-                    border: "1px solid rgba(255,255,255,0.15)",
-                  }}
-                >
-                  <div style={{ fontSize: 12, opacity: 0.6 }}>DOSSIER</div>
-                  <strong>Crea un record Featured con priority = 3</strong>
-                  <div style={{ fontSize: 14, opacity: 0.8, marginTop: 6 }}>
-                    Pubblicalo su DatoCMS.
+                {item.link ? (
+                  <div style={{ marginTop: 10 }}>
+                    <a
+                      href={item.link}
+                      style={{
+                        color: "#fff",
+                        textDecoration: "none",
+                        fontWeight: 800,
+                        opacity: 0.9,
+                      }}
+                    >
+                      Apri →
+                    </a>
                   </div>
-                </article>
-              </>
-            )}
+                ) : null}
+              </article>
+            ))}
           </div>
         </div>
       </section>
     </main>
   );
 }
-
