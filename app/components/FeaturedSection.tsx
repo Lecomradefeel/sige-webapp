@@ -81,9 +81,11 @@ const commonStyle: React.CSSProperties = {
 
 function Extra({
   open,
+  maxOpenHeight = 240,
   children,
 }: {
   open: boolean;
+  maxOpenHeight?: number;
   children: React.ReactNode;
 }) {
   const transition = open
@@ -93,7 +95,7 @@ function Extra({
   return (
     <div
       style={{
-        maxHeight: open ? 240 : 0,
+        maxHeight: open ? maxOpenHeight : 0,
         opacity: open ? 1 : 0,
         overflow: "hidden",
         transition,
@@ -184,7 +186,7 @@ export default function FeaturedSection({ items }: { items: FeaturedItem[] }) {
               </p>
             ) : null}
 
-            <Extra open={primaryOpen}>
+            <Extra open={primaryOpen} maxOpenHeight={1200}>
               {/* Qui puoi metterci “più info” oltre al bottone */}
               {mainHref ? (
                 <span
