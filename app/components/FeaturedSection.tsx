@@ -50,6 +50,53 @@ function Extra({
   );
 }
 
+/**
+ * Overlay assoluto: si apre sotto la card senza cambiare layout -> niente "rimbalzo".
+ * Lo usiamo SOLO per la primaria.
+ */
+function ExtraOverlay({
+  open,
+  maxOpenHeight = 900,
+  children,
+}: {
+  open: boolean;
+  maxOpenHeight?: number;
+  children: React.ReactNode;
+}) {
+  const transition = open
+    ? "max-height 520ms cubic-bezier(0.4, 0, 0.2, 1), opacity 380ms ease"
+    : "max-height 900ms cubic-bezier(0.2, 0, 0, 1), opacity 520ms ease 80ms";
+
+  return (
+    <div
+      style={{
+        position: "absolute",
+        left: 0,
+        right: 0,
+        top: "100%",
+        marginTop: 12,
+        zIndex: 20,
+
+        borderRadius: 22,
+        border: "1px solid rgba(255,255,255,0.15)",
+        background: "rgba(0,0,0,0.65)",
+        backdropFilter: "blur(10px)",
+        padding: 16,
+
+        maxHeight: open ? maxOpenHeight : 0,
+        opacity: open ? 1 : 0,
+        overflow: "hidden",
+        pointerEvents: open ? "auto" : "none",
+        transition,
+
+        boxShadow: "0 22px 70px rgba(0,0,0,0.55)",
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
 function CardBase({
   kind,
   open,
@@ -80,8 +127,7 @@ function CardBase({
     padding: kind === "primary" ? 28 : 20,
     color: "inherit",
     textDecoration: "none",
-    transition:
-      "box-shadow 180ms ease, border-color 180ms ease, transform 180ms ease",
+    transition: "box-shadow 180ms ease, border-color 180ms ease",
     boxShadow: open ? "0 22px 70px rgba(0,0,0,0.55)" : "none",
     outline: "none",
     ...style,
@@ -96,7 +142,12 @@ function CardBase({
 
   if (href) {
     return (
-      <a href={href} aria-label={ariaLabel} style={commonStyle} {...interactiveProps}>
+      <a
+        href={href}
+        aria-label={ariaLabel}
+        style={commonStyle}
+        {...interactiveProps}
+      >
         {children}
       </a>
     );
@@ -121,7 +172,7 @@ export default function FeaturedSection({ items }: { items: FeaturedItem[] }) {
   const s1 = featured.find((f) => f.priority === 2) ?? featured[1];
   const s2 = featured.find((f) => f.priority === 3) ?? featured[2];
 
-  // hover indipendenti (non si influenzano tra loro)
+  // hover indipendenti
   const [hoverMain, setHoverMain] = useState(false);
   const [hoverS1, setHoverS1] = useState(false);
   const [hoverS2, setHoverS2] = useState(false);
@@ -140,16 +191,15 @@ export default function FeaturedSection({ items }: { items: FeaturedItem[] }) {
       </div>
 
       <div
-  className="wrap"
-  style={{
-    display: "grid",
-    gridTemplateColumns: "2fr 1fr",
-    gap: 20,
-    alignItems: "stretch", // 🔑 fondamentale
-  }}
-
+        className="wrap"
+        style={{
+          display: "grid",
+          gridTemplateColumns: "2fr 1fr",
+          gap: 20,
+          alignItems: "stretch", // 🔑 primaria chiusa allineata tra secondaria e terziaria
+        }}
       >
-        {/* COLONNA SINISTRA: PRIMARIA indipendente */}
+        {/* SINISTRA: PRIMARIA */}
         <div style={{ minWidth: 0 }}>
           <CardBase
             kind="primary"
@@ -158,58 +208,60 @@ export default function FeaturedSection({ items }: { items: FeaturedItem[] }) {
             open={hoverMain}
             onEnter={() => setHoverMain(true)}
             onLeave={() => setHoverMain(false)}
-              style={{
-    height: hoverMain ? "auto" : "100%", // 🔑 ALLINEAMENTO PERFETTO
-  }}
+            // 🔑 non cambia mai height -> niente rimbalzo
+            style={{ height: "100%" }}
           >
-            <div style={{ fontSize: 12, opacity: 0.6 }}>
-              <SafeText>{main?.label ?? "CAMPAGNA"}</SafeText>
-            </div>
-
-            <h3 style={{ fontSize: 30, margin: "12px 0" }}>
-              <SafeText>{main?.title ?? "Primaria"}</SafeText>
-            </h3>
-
-            {/* breve descrizione SEMPRE */}
-            <p style={{ maxWidth: 680, margin: 0, opacity: 0.95 }}>
-              <SafeText>
-                {main?.excerpt ??
-                  "Aggiungi una breve descrizione (excerpt) nel CMS."}
-              </SafeText>
-            </p>
-
-            {/* extra MOLTO grande, solo per primaria */}
-            <Extra open={hoverMain} maxOpenHeight={1400}>
-              <div style={{ fontSize: 14, opacity: 0.9, lineHeight: 1.55 }}>
-                <div style={{ marginBottom: 10, opacity: 0.85 }}>
-                  Spazio per più dettagli (in futuro possiamo collegare un campo
-                  “body” dal CMS).
-                </div>
-
-                {mainHref ? (
-                  <span
-                    style={{
-                      display: "inline-block",
-                      padding: "10px 14px",
-                      borderRadius: 14,
-                      background: "#fff",
-                      color: "#000",
-                      fontWeight: 800,
-                    }}
-                  >
-                    Approfondisci →
-                  </span>
-                ) : (
-                  <div style={{ fontSize: 13, opacity: 0.75 }}>
-                    Aggiungi un link nel CMS per rendere la box cliccabile.
-                  </div>
-                )}
+            {/* wrapper relativo per overlay assoluto */}
+            <div style={{ position: "relative", height: "100%" }}>
+              <div style={{ fontSize: 12, opacity: 0.6 }}>
+                <SafeText>{main?.label ?? "CAMPAGNA"}</SafeText>
               </div>
-            </Extra>
+
+              <h3 style={{ fontSize: 30, margin: "12px 0" }}>
+                <SafeText>{main?.title ?? "Primaria"}</SafeText>
+              </h3>
+
+              {/* breve descrizione SEMPRE */}
+              <p style={{ maxWidth: 680, margin: 0, opacity: 0.95 }}>
+                <SafeText>
+                  {main?.excerpt ??
+                    "Aggiungi una breve descrizione (excerpt) nel CMS."}
+                </SafeText>
+              </p>
+
+              {/* overlay grande: primaria si “allunga” verso il basso senza spostare layout */}
+              <ExtraOverlay open={hoverMain} maxOpenHeight={900}>
+                <div style={{ fontSize: 14, opacity: 0.95, lineHeight: 1.55 }}>
+                  <div style={{ marginBottom: 10, opacity: 0.85 }}>
+                    Qui puoi inserire più dettagli (poi lo colleghiamo a un campo
+                    “body” dal CMS se vuoi).
+                  </div>
+
+                  {mainHref ? (
+                    <span
+                      style={{
+                        display: "inline-block",
+                        padding: "10px 14px",
+                        borderRadius: 14,
+                        background: "#fff",
+                        color: "#000",
+                        fontWeight: 800,
+                      }}
+                    >
+                      Approfondisci →
+                    </span>
+                  ) : (
+                    <div style={{ fontSize: 13, opacity: 0.75 }}>
+                      Aggiungi un link nel CMS per rendere la box cliccabile.
+                    </div>
+                  )}
+                </div>
+              </ExtraOverlay>
+            </div>
           </CardBase>
         </div>
 
-        {/* COLONNA DESTRA: SECONDARIA + TERZIARIA indipendenti */}
+        {/* DESTRA: SECONDARIA + TERZIARIA */}
         <div style={{ display: "grid", gap: 20, minWidth: 0 }}>
           <CardBase
             kind="small"
@@ -230,7 +282,8 @@ export default function FeaturedSection({ items }: { items: FeaturedItem[] }) {
             {/* breve descrizione SEMPRE */}
             <div style={{ marginTop: 6, fontSize: 14, opacity: 0.8 }}>
               <SafeText>
-                {s1?.excerpt ?? "Aggiungi una breve descrizione (excerpt) nel CMS."}
+                {s1?.excerpt ??
+                  "Aggiungi una breve descrizione (excerpt) nel CMS."}
               </SafeText>
             </div>
 
@@ -261,7 +314,8 @@ export default function FeaturedSection({ items }: { items: FeaturedItem[] }) {
             {/* breve descrizione SEMPRE */}
             <div style={{ marginTop: 6, fontSize: 14, opacity: 0.8 }}>
               <SafeText>
-                {s2?.excerpt ?? "Aggiungi una breve descrizione (excerpt) nel CMS."}
+                {s2?.excerpt ??
+                  "Aggiungi una breve descrizione (excerpt) nel CMS."}
               </SafeText>
             </div>
 
@@ -283,4 +337,3 @@ export default function FeaturedSection({ items }: { items: FeaturedItem[] }) {
     </section>
   );
 }
-
