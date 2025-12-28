@@ -1,6 +1,7 @@
 import FeaturedSection, {
   type FeaturedItem,
 } from "./components/FeaturedSection";
+import ParticipateSection from "./sections/participate/ParticipateSection.server";
 
 async function getFeatured(): Promise<FeaturedItem[]> {
   const query = `
@@ -68,6 +69,9 @@ export default async function Home() {
 
       {/* IN EVIDENZA (da DatoCMS + hover/tap expand) */}
       <FeaturedSection items={featured} />
+
+            {/* PARTECIPA (gestibile da CMS) */}
+      <ParticipateSection />
     </main>
   );
 }
