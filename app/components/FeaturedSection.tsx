@@ -140,13 +140,14 @@ export default function FeaturedSection({ items }: { items: FeaturedItem[] }) {
       </div>
 
       <div
-        className="wrap"
-        style={{
-          display: "grid",
-          gridTemplateColumns: "2fr 1fr",
-          gap: 20,
-          alignItems: "start", // colonne indipendenti (NON stretch)
-        }}
+  className="wrap"
+  style={{
+    display: "grid",
+    gridTemplateColumns: "2fr 1fr",
+    gap: 20,
+    alignItems: "stretch", // 🔑 fondamentale
+  }}
+
       >
         {/* COLONNA SINISTRA: PRIMARIA indipendente */}
         <div style={{ minWidth: 0 }}>
@@ -157,6 +158,9 @@ export default function FeaturedSection({ items }: { items: FeaturedItem[] }) {
             open={hoverMain}
             onEnter={() => setHoverMain(true)}
             onLeave={() => setHoverMain(false)}
+              style={{
+    height: hoverMain ? "auto" : "100%", // 🔑 ALLINEAMENTO PERFETTO
+  }}
           >
             <div style={{ fontSize: 12, opacity: 0.6 }}>
               <SafeText>{main?.label ?? "CAMPAGNA"}</SafeText>
