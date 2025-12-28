@@ -139,136 +139,134 @@ export default function FeaturedSection({ items }: { items: FeaturedItem[] }) {
       </div>
 
       {/* CSS inline per non creare altri file */}
-      <style jsx>{`
-        .wrap {
-          display: grid;
-          grid-template-columns: 2fr 1fr;
-          gap: 20px;
-          align-items: stretch; /* fondamentale: destra segue l’altezza della sinistra */
-        }
+      <style>{`
+       .wrap {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+  align-items: stretch;
+}
 
-        .card {
-          border: 1px solid rgba(255, 255, 255, 0.15);
-          border-radius: 22px;
-          padding: 20px;
-          background: rgba(255, 255, 255, 0.02);
-          transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
-          cursor: pointer;
-          outline: none;
-        }
+.card {
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 22px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.02);
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+  cursor: pointer;
+  outline: none;
+}
 
-        .primary {
-          padding: 28px;
-          border-radius: 28px;
-        }
+.primary {
+  padding: 28px;
+  border-radius: 28px;
+}
 
-        .card:hover {
-          transform: scale(1.01);
-          border-color: rgba(255, 255, 255, 0.28);
-          box-shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
-        }
+/* hover SOLO estetico */
+.card:hover {
+  transform: scale(1.01);
+  border-color: rgba(255, 255, 255, 0.28);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+}
 
-        .card.isActive {
-          border-color: rgba(255, 255, 255, 0.3);
-          box-shadow: 0 22px 70px rgba(0, 0, 0, 0.55);
-        }
+.card.isActive {
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.55);
+}
 
-        .tag {
-          font-size: 12px;
-          opacity: 0.6;
-        }
+.tag {
+  font-size: 12px;
+  opacity: 0.6;
+}
 
-        .title {
-          font-size: 30px;
-          margin: 12px 0;
-        }
+.title {
+  font-size: 30px;
+  margin: 12px 0;
+}
 
-        .excerpt {
-          max-width: 560px;
-          margin: 0;
-          opacity: 0.95;
-        }
+.excerpt {
+  max-width: 560px;
+  margin: 0;
+  opacity: 0.95;
+}
 
-        .strong {
-          font-weight: 800;
-          margin-top: 8px;
-        }
+.strong {
+  font-weight: 800;
+  margin-top: 8px;
+}
 
-        .mini {
-          margin-top: 6px;
-          font-size: 14px;
-          opacity: 0.8;
-        }
+.mini {
+  margin-top: 6px;
+  font-size: 14px;
+  opacity: 0.8;
+}
 
-        /* Colonna destra: si “ancora al fondo” quando la primaria si espande */
-        .rightCol {
-          display: flex;
-          flex-direction: column;
-          gap: 20px;
-          height: 100%; /* si estende all’altezza della cella grid */
-          justify-content: flex-start;
-          transition: justify-content 220ms ease;
-        }
+/* colonna destra “trascinata” quando la primaria è espansa */
+.rightCol {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  height: 100%;
+  justify-content: flex-start;
+  transition: justify-content 220ms ease;
+}
 
-        .wrap.primaryExpanded .rightCol {
-          justify-content: flex-end; /* EFFETTO “trascinata giù” */
-        }
+.wrap.primaryExpanded .rightCol {
+  justify-content: flex-end;
+}
 
-        /* EXTRA: la parte che “allunga il bordo inferiore” */
-        .extra {
-          max-height: 0;
-          opacity: 0;
-          overflow: hidden;
-          transition: max-height 260ms ease, opacity 220ms ease;
-        }
+/* EXTRA: espansione lenta */
+.extra {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition:
+    max-height 520ms cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 380ms ease;
+}
 
-        /* su hover desktop si apre */
-        .card:hover .extra {
-          max-height: 220px;
-          opacity: 1;
-        }
+/* IMPORTANTISSIMO: niente apertura su hover! */
 
-        /* su tap/click resta aperto */
-        .extra.open {
-          max-height: 220px;
-          opacity: 1;
-        }
+/* apertura SOLO su tap/click */
+.extra.open {
+  max-height: 220px;
+  opacity: 1;
+}
 
-        .extraInner {
-          padding-top: 14px;
-        }
+.extraInner {
+  padding-top: 14px;
+}
 
-        .btn {
-          display: inline-block;
-          padding: 10px 14px;
-          border-radius: 14px;
-          background: #fff;
-          color: #000;
-          text-decoration: none;
-          font-weight: 800;
-        }
+.btn {
+  display: inline-block;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: #fff;
+  color: #000;
+  text-decoration: none;
+  font-weight: 800;
+}
 
-        .link {
-          color: #fff;
-          text-decoration: none;
-          font-weight: 800;
-          opacity: 0.9;
-        }
+.link {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 800;
+  opacity: 0.9;
+}
 
-        .hint {
-          font-size: 13px;
-          opacity: 0.75;
-        }
+.hint {
+  font-size: 13px;
+  opacity: 0.75;
+}
 
-        /* Mobile: layout in colonna (se vuoi mantenerlo 2fr/1fr anche su mobile dimmelo) */
-        @media (max-width: 860px) {
-          .wrap {
-            grid-template-columns: 1fr;
-          }
-          .wrap.primaryExpanded .rightCol {
-            justify-content: flex-start; /* su mobile non ha senso “ancorare al fondo” */
-          }
-        }
+@media (max-width: 860px) {
+  .wrap {
+    grid-template-columns: 1fr;
+  }
+  .wrap.primaryExpanded .rightCol {
+    justify-content: flex-start;
+  }
+}
       `}</style>
     </section>
   );
