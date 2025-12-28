@@ -21,18 +21,18 @@ async function getFeatured(): Promise<FeaturedItem[]> {
     }
   `;
 
-  const res = await fetch(
-    "https://graphql.datocms.com/",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.DATOCMS_API_TOKEN}`,
-      },
-      body: JSON.stringify({ query }),
-      next: { revalidate: 60 },
-    } as any
-  );
+const res = await fetch(
+  "https://graphql.datocms.com/",
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${process.env.DATOCMS_API_TOKEN}`,
+    },
+    body: JSON.stringify({ query }),
+    cache: "no-store",
+  } as any
+);
 
   const json = await res.json();
 
