@@ -10,74 +10,32 @@ export type FeaturedItem = {
   link?: string | null;
 };
 
-function SafeText({ children }: { children?: string | null }) {
-  return <>{children ?? ""}</>;
-}
-
-function Card({
-  children,
-  onClick,
-  active,
-}: {
-  children: React.ReactNode;
-  onClick?: () => void;
-  active?: boolean;
-}) {
-  return (
-    <article
-      onClick={onClick}
-      style={{
-        padding: active ? 30 : 20,
-        borderRadius: active ? 28 : 22,
-        border: "1px solid rgba(255,255,255,0.15)",
-        cursor: onClick ? "pointer" : "default",
-        transition:
-          "transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease, padding 180ms ease",
-        willChange: "transform",
-        boxShadow: active ? "0 20px 60px rgba(0,0,0,0.45)" : "none",
-      }}
-      onMouseEnter={(e) => {
-        // hover “stretch” leggero (solo desktop)
-        (e.currentTarget as HTMLElement).style.transform = "scale(1.02)";
-        (e.currentTarget as HTMLElement).style.borderColor =
-          "rgba(255,255,255,0.28)";
-        (e.currentTarget as HTMLElement).style.boxShadow =
-          "0 18px 50px rgba(0,0,0,0.45)";
-      }}
-      onMouseLeave={(e) => {
-        (e.currentTarget as HTMLElement).style.transform = "scale(1)";
-        (e.currentTarget as HTMLElement).style.borderColor =
-          "rgba(255,255,255,0.15)";
-        (e.currentTarget as HTMLElement).style.boxShadow = active
-          ? "0 20px 60px rgba(0,0,0,0.45)"
-          : "none";
-      }}
-      role={onClick ? "button" : undefined}
-      tabIndex={onClick ? 0 : undefined}
-      onKeyDown={(e) => {
-        if (!onClick) return;
-        if (e.key === "Enter" || e.key === " ") onClick();
-      }}
-    >
-      {children}
-    </article>
-  );
+function safeUrl(url?: string | null) {
+  if (!url) return null;
+  const u = url.trim();
+  if (!u) return null;
+  if (!/^https?:\/\//i.test(u)) return `https://${u}`;
+  return u;
 }
 
 export default function FeaturedSection({ items }: { items: FeaturedItem[] }) {
-  const main = useMemo(
-    () => items.find((f) => f.priority === 1) ?? items[0],
-    [items]
-  );
-  const secondary = useMemo(
-    () => items.filter((f) => f !== main).slice(0, 2),
-    [items, main]
-  );
+  const featured = useMemo(() => {
+    const arr = [...items].sort((a, b) => (a.priority ?? 999) - (b.priority ?? 999));
+    return arr.slice(0, 3);
+  }, [items]);
 
-  // card “attiva” su mobile/tap
+  const main = featured.find((f) => f.priority === 1) ?? featured[0];
+  const s1 = featured.find((f) => f.priority === 2) ?? featured[1];
+  const s2 = featured.find((f) => f.priority === 3) ?? featured[2];
+
+  // tap/click “sticky”: resta aperta finché non ritappi
   const [active, setActive] = useState<"main" | "s1" | "s2" | null>(null);
 
-  const hasSecondaries = secondary.length === 2;
+  const mainUrl = safeUrl(main?.link);
+  const s1Url = safeUrl(s1?.link);
+  const s2Url = safeUrl(s2?.link);
+
+  const primaryExpanded = active === "main";
 
   return (
     <section>
@@ -88,149 +46,231 @@ export default function FeaturedSection({ items }: { items: FeaturedItem[] }) {
         </div>
       </div>
 
-      {/* Grid responsiva: su mobile va in colonna */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(12, 1fr)",
-          gap: 20,
-          alignItems: "start",
-        }}
-      >
-        {/* MAIN: normalmente 8 colonne, se attiva diventa 12 */}
-        <div
-          style={{
-            gridColumn:
-              active === "main"
-                ? "1 / -1"
-                : "span 12",
+      {/* Layout “prima edizione”: 2 colonne, destra con 2 card */}
+      <div className={`wrap ${primaryExpanded ? "primaryExpanded" : ""}`}>
+        {/* PRIMARIA */}
+        <article
+          className={`card primary ${active === "main" ? "isActive" : ""}`}
+          onClick={() => setActive((v) => (v === "main" ? null : "main"))}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              setActive((v) => (v === "main" ? null : "main"));
+            }
           }}
         >
-          <Card
-            active={active === "main"}
-            onClick={() => setActive((v) => (v === "main" ? null : "main"))}
-          >
-            <div style={{ fontSize: 12, opacity: 0.6 }}>
-              <SafeText>{main?.label ?? "CAMPAGNA"}</SafeText>
-            </div>
+          <div className="tag">{main?.label ?? "CAMPAGNA"}</div>
+          <h3 className="title">{main?.title ?? "Primaria (priority 1)"}</h3>
+          <p className="excerpt">{main?.excerpt ?? ""}</p>
 
-            <h3 style={{ fontSize: 30, margin: "12px 0" }}>
-              <SafeText>{main?.title ?? "Nessun contenuto trovato"}</SafeText>
-            </h3>
-
-            {main?.excerpt ? (
-              <p style={{ maxWidth: 560, margin: 0, opacity: 0.9 }}>
-                <SafeText>{main.excerpt}</SafeText>
-              </p>
-            ) : null}
-
-            {main?.link ? (
-              <div style={{ marginTop: 14 }}>
-                <a
-                  href={main.link}
-                  style={{
-                    display: "inline-block",
-                    padding: "10px 14px",
-                    borderRadius: 14,
-                    background: "#fff",
-                    color: "#000",
-                    textDecoration: "none",
-                    fontWeight: 800,
-                  }}
-                  onClick={(e) => e.stopPropagation()}
-                >
+          {/* EXTRA: si apre su hover (desktop) o se isActive (tap/click) */}
+          <div className={`extra ${active === "main" ? "open" : ""}`}>
+            <div className="extraInner">
+              {mainUrl ? (
+                <a className="btn" href={mainUrl} onClick={(e) => e.stopPropagation()}>
                   Apri
                 </a>
+              ) : (
+                <div className="hint">Aggiungi un link nel CMS per mostrare il bottone.</div>
+              )}
+            </div>
+          </div>
+        </article>
+
+        {/* DESTRA: due card, devono “seguire” l’allungamento */}
+        <div className="rightCol">
+          <article
+            className={`card small ${active === "s1" ? "isActive" : ""}`}
+            onClick={() => setActive((v) => (v === "s1" ? null : "s1"))}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                setActive((v) => (v === "s1" ? null : "s1"));
+              }
+            }}
+          >
+            <div className="tag">{s1?.label ?? "EVENTO"}</div>
+            <div className="strong">{s1?.title ?? "Secondaria (priority 2)"}</div>
+            {s1?.excerpt ? <div className="mini">{s1.excerpt}</div> : null}
+
+            <div className={`extra ${active === "s1" ? "open" : ""}`}>
+              <div className="extraInner">
+                {s1Url ? (
+                  <a className="link" href={s1Url} onClick={(e) => e.stopPropagation()}>
+                    Apri →
+                  </a>
+                ) : (
+                  <div className="hint">Aggiungi un link nel CMS.</div>
+                )}
               </div>
-            ) : null}
-          </Card>
-        </div>
+            </div>
+          </article>
 
-        {/* Secondarie wrapper: su desktop sta a destra, su mobile sotto */}
-        <div
-          style={{
-            gridColumn:
-              active === "main"
-                ? "1 / -1"
-                : "span 12",
-            display: "grid",
-            gap: 20,
-          }}
-        >
-          {hasSecondaries ? (
-            secondary.map((item, idx) => {
-              const key = idx === 0 ? "s1" : "s2";
-              const isActive = active === key;
+          <article
+            className={`card small ${active === "s2" ? "isActive" : ""}`}
+            onClick={() => setActive((v) => (v === "s2" ? null : "s2"))}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                setActive((v) => (v === "s2" ? null : "s2"));
+              }
+            }}
+          >
+            <div className="tag">{s2?.label ?? "DOSSIER"}</div>
+            <div className="strong">{s2?.title ?? "Terziaria (priority 3)"}</div>
+            {s2?.excerpt ? <div className="mini">{s2.excerpt}</div> : null}
 
-              return (
-                <div
-                  key={item.priority}
-                  style={{
-                    // se una secondaria è attiva: diventa “larga” (full width)
-                    gridColumn: isActive ? "1 / -1" : "auto",
-                  }}
-                >
-                  <Card
-                    active={isActive}
-                    onClick={() =>
-                      setActive((v) => (v === key ? null : key))
-                    }
-                  >
-                    <div style={{ fontSize: 12, opacity: 0.6 }}>
-                      <SafeText>{item.label ?? "IN EVIDENZA"}</SafeText>
-                    </div>
-
-                    <strong style={{ display: "block", marginTop: 8 }}>
-                      <SafeText>{item.title}</SafeText>
-                    </strong>
-
-                    {item.excerpt ? (
-                      <div style={{ fontSize: 14, opacity: 0.8, marginTop: 6 }}>
-                        <SafeText>{item.excerpt}</SafeText>
-                      </div>
-                    ) : null}
-
-                    {item.link ? (
-                      <div style={{ marginTop: 10 }}>
-                        <a
-                          href={item.link}
-                          style={{
-                            color: "#fff",
-                            textDecoration: "none",
-                            fontWeight: 800,
-                            opacity: 0.9,
-                          }}
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          Apri →
-                        </a>
-                      </div>
-                    ) : null}
-                  </Card>
-                </div>
-              );
-            })
-          ) : (
-            <>
-              <Card>
-                <div style={{ fontSize: 12, opacity: 0.6 }}>EVENTO</div>
-                <strong style={{ display: "block", marginTop: 8 }}>
-                  Crea un record Featured con priority = 2
-                </strong>
-              </Card>
-              <Card>
-                <div style={{ fontSize: 12, opacity: 0.6 }}>DOSSIER</div>
-                <strong style={{ display: "block", marginTop: 8 }}>
-                  Crea un record Featured con priority = 3
-                </strong>
-              </Card>
-            </>
-          )}
+            <div className={`extra ${active === "s2" ? "open" : ""}`}>
+              <div className="extraInner">
+                {s2Url ? (
+                  <a className="link" href={s2Url} onClick={(e) => e.stopPropagation()}>
+                    Apri →
+                  </a>
+                ) : (
+                  <div className="hint">Aggiungi un link nel CMS.</div>
+                )}
+              </div>
+            </div>
+          </article>
         </div>
       </div>
 
-      {/* Nota: su desktop vogliamo 8/4: lo facciamo con una media query CSS globale se vuoi.
-          Per ora questo è già responsive e “allargabile” al tap. */}
+      {/* CSS inline per non creare altri file */}
+      <style jsx>{`
+        .wrap {
+          display: grid;
+          grid-template-columns: 2fr 1fr;
+          gap: 20px;
+          align-items: stretch; /* fondamentale: destra segue l’altezza della sinistra */
+        }
+
+        .card {
+          border: 1px solid rgba(255, 255, 255, 0.15);
+          border-radius: 22px;
+          padding: 20px;
+          background: rgba(255, 255, 255, 0.02);
+          transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+          cursor: pointer;
+          outline: none;
+        }
+
+        .primary {
+          padding: 28px;
+          border-radius: 28px;
+        }
+
+        .card:hover {
+          transform: scale(1.01);
+          border-color: rgba(255, 255, 255, 0.28);
+          box-shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+        }
+
+        .card.isActive {
+          border-color: rgba(255, 255, 255, 0.3);
+          box-shadow: 0 22px 70px rgba(0, 0, 0, 0.55);
+        }
+
+        .tag {
+          font-size: 12px;
+          opacity: 0.6;
+        }
+
+        .title {
+          font-size: 30px;
+          margin: 12px 0;
+        }
+
+        .excerpt {
+          max-width: 560px;
+          margin: 0;
+          opacity: 0.95;
+        }
+
+        .strong {
+          font-weight: 800;
+          margin-top: 8px;
+        }
+
+        .mini {
+          margin-top: 6px;
+          font-size: 14px;
+          opacity: 0.8;
+        }
+
+        /* Colonna destra: si “ancora al fondo” quando la primaria si espande */
+        .rightCol {
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
+          height: 100%; /* si estende all’altezza della cella grid */
+          justify-content: flex-start;
+          transition: justify-content 220ms ease;
+        }
+
+        .wrap.primaryExpanded .rightCol {
+          justify-content: flex-end; /* EFFETTO “trascinata giù” */
+        }
+
+        /* EXTRA: la parte che “allunga il bordo inferiore” */
+        .extra {
+          max-height: 0;
+          opacity: 0;
+          overflow: hidden;
+          transition: max-height 260ms ease, opacity 220ms ease;
+        }
+
+        /* su hover desktop si apre */
+        .card:hover .extra {
+          max-height: 220px;
+          opacity: 1;
+        }
+
+        /* su tap/click resta aperto */
+        .extra.open {
+          max-height: 220px;
+          opacity: 1;
+        }
+
+        .extraInner {
+          padding-top: 14px;
+        }
+
+        .btn {
+          display: inline-block;
+          padding: 10px 14px;
+          border-radius: 14px;
+          background: #fff;
+          color: #000;
+          text-decoration: none;
+          font-weight: 800;
+        }
+
+        .link {
+          color: #fff;
+          text-decoration: none;
+          font-weight: 800;
+          opacity: 0.9;
+        }
+
+        .hint {
+          font-size: 13px;
+          opacity: 0.75;
+        }
+
+        /* Mobile: layout in colonna (se vuoi mantenerlo 2fr/1fr anche su mobile dimmelo) */
+        @media (max-width: 860px) {
+          .wrap {
+            grid-template-columns: 1fr;
+          }
+          .wrap.primaryExpanded .rightCol {
+            justify-content: flex-start; /* su mobile non ha senso “ancorare al fondo” */
+          }
+        }
+      `}</style>
     </section>
   );
 }
+
