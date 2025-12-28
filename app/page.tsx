@@ -3,7 +3,7 @@ type FeaturedItem = {
   title: string;
   excerpt?: string | null;
   priority: number;
-  link?: { url?: string | null } | null;
+  link?: string | null;
 };
 
 async function getFeatured(): Promise<FeaturedItem[]> {
@@ -14,12 +14,33 @@ async function getFeatured(): Promise<FeaturedItem[]> {
         title
         excerpt
         priority
-        link {
-          url
-        }
+        link
       }
     }
   `;
+
+  const res = await fetch(
+    "https://graphql.datocms.com/",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.DATOCMS_API_TOKEN}`,
+      },
+      body: JSON.stringify({ query }),
+      cache: "no-store",
+    } as any
+  );
+
+  const json = await res.json();
+
+  if (!res.ok || json.errors) {
+    console.error("DatoCMS error:", json.errors);
+    return [];
+  }
+
+  return json?.data?.allFeatureds ?? [];
+}
 
 const res = await fetch(
   "https://graphql.datocms.com/",
