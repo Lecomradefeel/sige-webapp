@@ -5,9 +5,9 @@ import { useMemo, useState } from "react";
 export type FeaturedItem = {
   label?: string | null;
   title: string;
-  excerpt?: string | null;
+  excerpt?: string | null; // breve descrizione
   priority: number;
-  link?: string | null;
+  link?: string | null; // URL (stringa) in Dato
 };
 
 function SafeText({ children }: { children?: string | null }) {
@@ -22,63 +22,6 @@ function safeUrl(url?: string | null) {
   return u;
 }
 
-function CardBase({
-  kind,
-  open,
-  href,
-  onEnter,
-  onLeave,
-  style,
-  children,
-}: {
-  kind: "primary" | "small";
-  open: boolean;
-  href?: string | null;
-  onEnter: () => void;
-  onLeave: () => void;
-  style?: React.CSSProperties;
-  children: React.ReactNode;
-}) {
-
-const commonStyle: React.CSSProperties = {
-  display: "block",
-  cursor: href ? "pointer" : "default",
-  borderRadius: kind === "primary" ? 28 : 22,
-  border: open
-    ? "1px solid rgba(255,255,255,0.30)"
-    : "1px solid rgba(255,255,255,0.15)",
-  background: "rgba(255,255,255,0.02)",
-  padding: kind === "primary" ? 28 : 20,
-  color: "inherit",
-  textDecoration: "none",
-  transition: "box-shadow 180ms ease, border-color 180ms ease, transform 180ms ease",
-  boxShadow: open ? "0 22px 70px rgba(0,0,0,0.55)" : "none",
-  outline: "none",
-  ...style,
-};
-
-  const interactiveProps = {
-    onPointerEnter: onEnter,
-    onPointerLeave: onLeave,
-    onFocus: onEnter, // tastiera: focus apre
-    onBlur: onLeave,  // blur chiude
-  };
-
-  if (href) {
-    return (
-      <a href={href} style={commonStyle} {...interactiveProps}>
-        {children}
-      </a>
-    );
-  }
-
-  return (
-    <article style={commonStyle} {...interactiveProps}>
-      {children}
-    </article>
-  );
-}
-
 function Extra({
   open,
   maxOpenHeight = 240,
@@ -88,6 +31,7 @@ function Extra({
   maxOpenHeight?: number;
   children: React.ReactNode;
 }) {
+  // apertura normale, chiusura più lenta
   const transition = open
     ? "max-height 520ms cubic-bezier(0.4, 0, 0.2, 1), opacity 380ms ease"
     : "max-height 900ms cubic-bezier(0.2, 0, 0, 1), opacity 520ms ease 80ms";
@@ -106,6 +50,69 @@ function Extra({
   );
 }
 
+function CardBase({
+  kind,
+  open,
+  href,
+  ariaLabel,
+  onEnter,
+  onLeave,
+  style,
+  children,
+}: {
+  kind: "primary" | "small";
+  open: boolean;
+  href?: string | null;
+  ariaLabel: string;
+  onEnter: () => void;
+  onLeave: () => void;
+  style?: React.CSSProperties;
+  children: React.ReactNode;
+}) {
+  const commonStyle: React.CSSProperties = {
+    display: "block",
+    cursor: href ? "pointer" : "default",
+    borderRadius: kind === "primary" ? 28 : 22,
+    border: open
+      ? "1px solid rgba(255,255,255,0.30)"
+      : "1px solid rgba(255,255,255,0.15)",
+    background: "rgba(255,255,255,0.02)",
+    padding: kind === "primary" ? 28 : 20,
+    color: "inherit",
+    textDecoration: "none",
+    transition: "box-shadow 180ms ease, border-color 180ms ease, transform 180ms ease",
+    boxShadow: open ? "0 22px 70px rgba(0,0,0,0.55)" : "none",
+    outline: "none",
+    ...style,
+  };
+
+  const interactiveProps = {
+    onPointerEnter: onEnter,
+    onPointerLeave: onLeave,
+    onFocus: onEnter,
+    onBlur: onLeave,
+  };
+
+  if (href) {
+    return (
+      <a
+        href={href}
+        aria-label={ariaLabel}
+        style={commonStyle}
+        {...interactiveProps}
+      >
+        {children}
+      </a>
+    );
+  }
+
+  return (
+    <article aria-label={ariaLabel} style={commonStyle} {...interactiveProps}>
+      {children}
+    </article>
+  );
+}
+
 export default function FeaturedSection({ items }: { items: FeaturedItem[] }) {
   const featured = useMemo(() => {
     const arr = [...items].sort(
@@ -118,7 +125,6 @@ export default function FeaturedSection({ items }: { items: FeaturedItem[] }) {
   const s1 = featured.find((f) => f.priority === 2) ?? featured[1];
   const s2 = featured.find((f) => f.priority === 3) ?? featured[2];
 
-  // Stato SOLO per hover/focus (non per click)
   const [hovered, setHovered] = useState<"main" | "s1" | "s2" | null>(null);
 
   const mainHref = safeUrl(main?.link);
@@ -129,7 +135,7 @@ export default function FeaturedSection({ items }: { items: FeaturedItem[] }) {
   const s1Open = hovered === "s1";
   const s2Open = hovered === "s2";
 
-  // “trascinamento”: se apro primaria -> destra giù; se apro una secondaria -> sinistra giù
+  // trascinamento
   const rightDraggedDown = primaryOpen;
   const leftDraggedDown = s1Open || s2Open;
 
@@ -151,7 +157,7 @@ export default function FeaturedSection({ items }: { items: FeaturedItem[] }) {
           alignItems: "stretch",
         }}
       >
-        {/* COLONNA SINISTRA */}
+        {/* SINISTRA */}
         <div
           style={{
             display: "flex",
@@ -162,55 +168,63 @@ export default function FeaturedSection({ items }: { items: FeaturedItem[] }) {
           }}
         >
           <CardBase
-  kind="primary"
-  href={mainHref}
-  open={primaryOpen}
-  onEnter={() => setHovered("main")}
-  onLeave={() => setHovered((v) => (v === "main" ? null : v))}
-  style={{
-    height: primaryOpen ? "auto" : "100%",
-  }}
->
-
+            kind="primary"
+            href={mainHref}
+            ariaLabel={`Apri: ${main?.title ?? "contenuto in evidenza"}`}
+            open={primaryOpen}
+            onEnter={() => setHovered("main")}
+            onLeave={() => setHovered((v) => (v === "main" ? null : v))}
+            // quando NON hoverata: si allinea tra bordo top secondaria e bordo bottom terziaria
+            style={{ height: primaryOpen ? "auto" : "100%" }}
+          >
             <div style={{ fontSize: 12, opacity: 0.6 }}>
               <SafeText>{main?.label ?? "CAMPAGNA"}</SafeText>
             </div>
 
             <h3 style={{ fontSize: 30, margin: "12px 0" }}>
-              <SafeText>{main?.title ?? ""}</SafeText>
+              <SafeText>{main?.title ?? "Primaria"}</SafeText>
             </h3>
 
-            {main?.excerpt ? (
-              <p style={{ maxWidth: 560, margin: 0, opacity: 0.95 }}>
-                <SafeText>{main.excerpt}</SafeText>
-              </p>
-            ) : null}
+            {/* breve descrizione SEMPRE visibile */}
+            <p style={{ maxWidth: 640, margin: 0, opacity: 0.95 }}>
+              <SafeText>{main?.excerpt ?? "Aggiungi una breve descrizione (excerpt) nel CMS."}</SafeText>
+            </p>
 
+            {/* EXTRA: qui puoi mettere “più info” (testo più lungo, dettagli, ecc.) */}
             <Extra open={primaryOpen} maxOpenHeight={1200}>
-              {/* Qui puoi metterci “più info” oltre al bottone */}
-              {mainHref ? (
-                <span
-                  style={{
-                    display: "inline-block",
-                    padding: "10px 14px",
-                    borderRadius: 14,
-                    background: "#fff",
-                    color: "#000",
-                    fontWeight: 800,
-                  }}
-                >
-                  Approfondisci
-                </span>
-              ) : (
-                <div style={{ fontSize: 13, opacity: 0.75 }}>
-                  Aggiungi un link nel CMS per mostrare “Approfondisci”.
+              <div style={{ fontSize: 14, opacity: 0.9, lineHeight: 1.5 }}>
+                {/* se vuoi, qui in futuro puoi usare un campo “body” dal CMS */}
+                <div style={{ marginBottom: 10 }}>
+                  <strong style={{ opacity: 0.95 }}>Approfondisci</strong>
+                  <div style={{ opacity: 0.8 }}>
+                    Passa il mouse per leggere più dettagli, poi clicca la card per aprire la pagina.
+                  </div>
                 </div>
-              )}
+
+                {mainHref ? (
+                  <span
+                    style={{
+                      display: "inline-block",
+                      padding: "10px 14px",
+                      borderRadius: 14,
+                      background: "#fff",
+                      color: "#000",
+                      fontWeight: 800,
+                    }}
+                  >
+                    Vai →
+                  </span>
+                ) : (
+                  <div style={{ fontSize: 13, opacity: 0.75 }}>
+                    Aggiungi un link nel CMS per rendere la box cliccabile.
+                  </div>
+                )}
+              </div>
             </Extra>
           </CardBase>
         </div>
 
-        {/* COLONNA DESTRA */}
+        {/* DESTRA */}
         <div
           style={{
             display: "flex",
@@ -221,9 +235,11 @@ export default function FeaturedSection({ items }: { items: FeaturedItem[] }) {
             transition: "justify-content 320ms cubic-bezier(0.4,0,0.2,1)",
           }}
         >
+          {/* SECONDARIA */}
           <CardBase
             kind="small"
             href={s1Href}
+            ariaLabel={`Apri: ${s1?.title ?? "contenuto secondario"}`}
             open={s1Open}
             onEnter={() => setHovered("s1")}
             onLeave={() => setHovered((v) => (v === "s1" ? null : v))}
@@ -233,31 +249,26 @@ export default function FeaturedSection({ items }: { items: FeaturedItem[] }) {
             </div>
 
             <strong style={{ display: "block", marginTop: 8 }}>
-              <SafeText>{s1?.title ?? ""}</SafeText>
+              <SafeText>{s1?.title ?? "Secondaria"}</SafeText>
             </strong>
 
-            {s1?.excerpt ? (
-              <div style={{ marginTop: 6, fontSize: 14, opacity: 0.8 }}>
-                <SafeText>{s1.excerpt}</SafeText>
-              </div>
-            ) : null}
+            {/* breve descrizione SEMPRE visibile */}
+            <div style={{ marginTop: 6, fontSize: 14, opacity: 0.8 }}>
+              <SafeText>{s1?.excerpt ?? "Aggiungi una breve descrizione (excerpt) nel CMS."}</SafeText>
+            </div>
 
-            <Extra open={s1Open}>
-              {s1Href ? (
-                <span style={{ fontWeight: 800, opacity: 0.9 }}>
-                  Approfondisci →
-                </span>
-              ) : (
-                <div style={{ fontSize: 13, opacity: 0.75 }}>
-                  Aggiungi un link nel CMS.
-                </div>
-              )}
+            <Extra open={s1Open} maxOpenHeight={360}>
+              <div style={{ fontSize: 14, opacity: 0.9 }}>
+                <span style={{ fontWeight: 800, opacity: 0.9 }}>Vai →</span>
+              </div>
             </Extra>
           </CardBase>
 
+          {/* TERZIARIA */}
           <CardBase
             kind="small"
             href={s2Href}
+            ariaLabel={`Apri: ${s2?.title ?? "contenuto terziario"}`}
             open={s2Open}
             onEnter={() => setHovered("s2")}
             onLeave={() => setHovered((v) => (v === "s2" ? null : v))}
@@ -267,37 +278,26 @@ export default function FeaturedSection({ items }: { items: FeaturedItem[] }) {
             </div>
 
             <strong style={{ display: "block", marginTop: 8 }}>
-              <SafeText>{s2?.title ?? ""}</SafeText>
+              <SafeText>{s2?.title ?? "Terziaria"}</SafeText>
             </strong>
 
-            {s2?.excerpt ? (
-              <div style={{ marginTop: 6, fontSize: 14, opacity: 0.8 }}>
-                <SafeText>{s2.excerpt}</SafeText>
-              </div>
-            ) : null}
+            {/* breve descrizione SEMPRE visibile */}
+            <div style={{ marginTop: 6, fontSize: 14, opacity: 0.8 }}>
+              <SafeText>{s2?.excerpt ?? "Aggiungi una breve descrizione (excerpt) nel CMS."}</SafeText>
+            </div>
 
-            <Extra open={s2Open}>
-              {s2Href ? (
-                <span style={{ fontWeight: 800, opacity: 0.9 }}>
-                  Approfondisci →
-                </span>
-              ) : (
-                <div style={{ fontSize: 13, opacity: 0.75 }}>
-                  Aggiungi un link nel CMS.
-                </div>
-              )}
+            <Extra open={s2Open} maxOpenHeight={360}>
+              <div style={{ fontSize: 14, opacity: 0.9 }}>
+                <span style={{ fontWeight: 800, opacity: 0.9 }}>Vai →</span>
+              </div>
             </Extra>
           </CardBase>
         </div>
       </div>
 
-      {/* Mobile: su touch non esiste hover. Se vuoi, nel prossimo step
-          aggiungiamo “tap-to-preview” SENZA rubare il click al link. */}
       <style>{`
         @media (max-width: 860px) {
-          .wrap {
-            grid-template-columns: 1fr !important;
-          }
+          .wrap { grid-template-columns: 1fr !important; }
         }
       `}</style>
     </section>
