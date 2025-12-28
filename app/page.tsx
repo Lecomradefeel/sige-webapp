@@ -34,6 +34,11 @@ const res = await fetch(
   } as any
 );
 
+console.log("TOKEN_PRESENT", Boolean(process.env.DATOCMS_API_TOKEN));
+console.log("STATUS", res.status);
+console.log("DATOCMS_ERRORS", json.errors ?? null);
+console.log("COUNT", json?.data?.allFeatureds?.length ?? 0);
+
   const json = await res.json();
 
   if (!res.ok || json.errors) {
