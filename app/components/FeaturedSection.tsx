@@ -28,6 +28,7 @@ function CardBase({
   href,
   onEnter,
   onLeave,
+  style,
   children,
 }: {
   kind: "primary" | "small";
@@ -35,23 +36,26 @@ function CardBase({
   href?: string | null;
   onEnter: () => void;
   onLeave: () => void;
+  style?: React.CSSProperties;
   children: React.ReactNode;
 }) {
-  const commonStyle: React.CSSProperties = {
-    display: "block",
-    cursor: href ? "pointer" : "default",
-    borderRadius: kind === "primary" ? 28 : 22,
-    border: open
-      ? "1px solid rgba(255,255,255,0.30)"
-      : "1px solid rgba(255,255,255,0.15)",
-    background: "rgba(255,255,255,0.02)",
-    padding: kind === "primary" ? 28 : 20,
-    color: "inherit",
-    textDecoration: "none",
-    transition: "box-shadow 180ms ease, border-color 180ms ease, transform 180ms ease",
-    boxShadow: open ? "0 22px 70px rgba(0,0,0,0.55)" : "none",
-    outline: "none",
-  };
+
+const commonStyle: React.CSSProperties = {
+  display: "block",
+  cursor: href ? "pointer" : "default",
+  borderRadius: kind === "primary" ? 28 : 22,
+  border: open
+    ? "1px solid rgba(255,255,255,0.30)"
+    : "1px solid rgba(255,255,255,0.15)",
+  background: "rgba(255,255,255,0.02)",
+  padding: kind === "primary" ? 28 : 20,
+  color: "inherit",
+  textDecoration: "none",
+  transition: "box-shadow 180ms ease, border-color 180ms ease, transform 180ms ease",
+  boxShadow: open ? "0 22px 70px rgba(0,0,0,0.55)" : "none",
+  outline: "none",
+  ...style,
+};
 
   const interactiveProps = {
     onPointerEnter: onEnter,
@@ -82,14 +86,17 @@ function Extra({
   open: boolean;
   children: React.ReactNode;
 }) {
+  const transition = open
+    ? "max-height 520ms cubic-bezier(0.4, 0, 0.2, 1), opacity 380ms ease"
+    : "max-height 900ms cubic-bezier(0.2, 0, 0, 1), opacity 520ms ease 80ms";
+
   return (
     <div
       style={{
         maxHeight: open ? 240 : 0,
         opacity: open ? 1 : 0,
         overflow: "hidden",
-        transition:
-          "max-height 520ms cubic-bezier(0.4, 0, 0.2, 1), opacity 380ms ease",
+        transition,
       }}
     >
       <div style={{ paddingTop: 14 }}>{children}</div>
@@ -153,12 +160,16 @@ export default function FeaturedSection({ items }: { items: FeaturedItem[] }) {
           }}
         >
           <CardBase
-            kind="primary"
-            href={mainHref}
-            open={primaryOpen}
-            onEnter={() => setHovered("main")}
-            onLeave={() => setHovered((v) => (v === "main" ? null : v))}
-          >
+  kind="primary"
+  href={mainHref}
+  open={primaryOpen}
+  onEnter={() => setHovered("main")}
+  onLeave={() => setHovered((v) => (v === "main" ? null : v))}
+  style={{
+    height: primaryOpen ? "auto" : "100%",
+  }}
+>
+
             <div style={{ fontSize: 12, opacity: 0.6 }}>
               <SafeText>{main?.label ?? "CAMPAGNA"}</SafeText>
             </div>
