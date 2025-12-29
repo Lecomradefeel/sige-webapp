@@ -208,7 +208,7 @@ export default function FeaturedSection({ items }: { items: FeaturedItem[] }) {
             open={hoverMain}
             onEnter={() => setHoverMain(true)}
             onLeave={() => setHoverMain(false)}
-            // 🔑 non cambia mai height -> niente rimbalzo
+            // 🔑 non cambia mai height -> niente rimbalzo della card
             style={{ height: "100%" }}
           >
             {/* wrapper relativo per overlay assoluto */}
