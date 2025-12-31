@@ -38,10 +38,33 @@ async function getEvents(): Promise<EventItem[]> {
 
 export default async function ParticipateSection() {
   const envEnabled = (process.env.EVENTS_ENABLED ?? "true").toLowerCase() === "true";
-  if (!envEnabled) return null;
+
+  // DEBUG: se non compare nemmeno questo box, il problema è page.tsx (import/JSX)
+  if (!envEnabled) {
+    return (
+      <section style={{ marginTop: 40, padding: 16, border: "1px solid #f00", borderRadius: 16 }}>
+        <strong>DEBUG Participate</strong>
+        <div style={{ opacity: 0.8 }}>EVENTS_ENABLED=false → sezione disabilitata</div>
+      </section>
+    );
+  }
 
   const events = await getEvents();
-  if (!events.length) return null;
+
+  // DEBUG: mostra quanti eventi arrivano
+  if (!events.length) {
+    return (
+      <section style={{ marginTop: 40, padding: 16, border: "1px solid #f90", borderRadius: 16 }}>
+        <strong>DEBUG Participate</strong>
+        <div style={{ opacity: 0.8 }}>EVENTS_ENABLED=true</div>
+        <div style={{ opacity: 0.8 }}>Eventi da DatoCMS: 0</div>
+        <div style={{ opacity: 0.8 }}>
+          Se vedi questo box, l’import in page.tsx è OK: il problema è la query/filtro o i dati.
+        </div>
+      </section>
+    );
+  }
 
   return <ParticipateSectionClient events={events} />;
 }
+
