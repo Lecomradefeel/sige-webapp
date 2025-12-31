@@ -1,78 +1,32 @@
-import FeaturedSection, {
-  type FeaturedItem,
-} from "./components/FeaturedSection";
+import Hero from "./components/Hero";
+import FeaturedSection from "./components/FeaturedSection"; // o dov’è ora
+import NewsletterBanner from "./components/NewsletterBanner";
 import ParticipateSection from "./sections/participate/ParticipateSection.server";
+import SupportSection from "./sections/support/SupportSection.server";
+import NewsletterSection from "./sections/newsletter/NewsletterSection"; // se ce l’hai
+// import InformatiSection from "./sections/news/InformatiSection.server";
 
-async function getFeatured(): Promise<FeaturedItem[]> {
-  const query = `
-    query {
-      allFeatureds(orderBy: priority_ASC, first: 3) {
-        label
-        title
-        excerpt
-        priority
-        link
-      }
-    }
-  `;
-
-  const res = await fetch(
-    "https://graphql.datocms.com/",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.DATOCMS_API_TOKEN}`,
-      },
-      body: JSON.stringify({ query }),
-      // caching “buono” su Next (1 min)
-      next: { revalidate: 60 },
-    } as any
-  );
-
-  const json: any = await res.json();
-
-  if (!res.ok || json?.errors) {
-    console.error("DatoCMS error:", json?.errors);
-    return [];
-  }
-
-  return (json?.data?.allFeatureds as FeaturedItem[]) ?? [];
-}
-
-export default async function Home() {
-  const featured = await getFeatured();
+export default function Home() {
+  const eventsEnabled = (process.env.EVENTS_ENABLED ?? "true").toLowerCase() === "true";
 
   return (
     <main style={{ maxWidth: 1120, margin: "0 auto", padding: "32px 20px" }}>
-      {/* HERO */}
-      <header style={{ padding: "72px 0 40px" }}>
-        <div style={{ fontSize: 14, opacity: 0.7 }}>
-          Sinistra Italiana · Genova
-        </div>
+      <Hero eventsEnabled={eventsEnabled} />
 
-        <h1
-          style={{
-            fontSize: 56,
-            lineHeight: 1.05,
-            margin: "12px 0 16px",
-          }}
-        >
-          Genova merita di più.
-        </h1>
+      <FeaturedSection />
+      <NewsletterBanner />
 
-        <p style={{ fontSize: 18, maxWidth: 720 }}>
-          Diritti, territorio, lavoro. Una politica utile, concreta,
-          partecipata.
-        </p>
-      </header>
+      <div id="partecipa">
+        <ParticipateSection />
+      </div>
 
-      {/* IN EVIDENZA (da DatoCMS + hover/tap expand) */}
-      <FeaturedSection items={featured} />
-           
-      <ParticipateSection />
+      <SupportSection />
 
+      {/* InformatiSection (news mensili) */}
+
+      <div id="newsletter">
+        <NewsletterSection />
+      </div>
     </main>
   );
 }
-
