@@ -3,7 +3,8 @@ import FeaturedSection from "./components/FeaturedSection"; // o dov’è ora
 import NewsletterBanner from "./components/NewsletterBanner";
 import ParticipateSection from "./sections/participate/ParticipateSection.server";
 import SupportSection from "./sections/support/SupportSection.server";
-import NewsletterSection from "./sections/newsletter/NewsletterSection"; // se ce l’hai
+import NewsletterSection from "./sections/newsletter/NewsletterSection";
+ // se ce l’hai
 // import InformatiSection from "./sections/news/InformatiSection.server";
 
 export default function Home() {
