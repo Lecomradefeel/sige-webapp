@@ -2,7 +2,7 @@ export const PARTICIPATE_QUERY = `
   query {
     allEvents(
       filter: { _status: { eq: published } }
-      orderBy: [startsAt_ASC]
+      orderBy: [_firstPublishedAt_ASC]
       first: 50
     ) {
       id

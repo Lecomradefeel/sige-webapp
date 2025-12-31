@@ -22,18 +22,21 @@ async function getEvents(): Promise<EventItem[]> {
 
   const rawEvents = json?.data?.allEvents ?? [];
 
-  return rawEvents.map((e: any) => ({
-    id: e.id,
-    title: e.title,
-    excerpt: e.excerpt ?? null,
-    body: e.body ?? null,
-    startsAt: e.startsAt,              // ✅ camelCase
-    ctaLabel: e.ctaLabel ?? null,      // ✅ camelCase
-    image: e.image ? { url: e.image.url, alt: e.image.alt } : null,
-    location: e.location
-      ? { latitude: e.location.latitude, longitude: e.location.longitude }
-      : null,
-  }));
+return rawEvents.map((e: any) => ({
+  id: e.id,
+  title: e.title,
+  excerpt: e.excerpt ?? null,
+  body: e.body ?? null,
+  startsAt: e.startsAt,        // ← camelCase
+  ctaLabel: e.ctaLabel ?? null,
+  image: e.image
+    ? { url: e.image.url, alt: e.image.alt }
+    : null,
+  location: e.location
+    ? { latitude: e.location.latitude, longitude: e.location.longitude }
+    : null,
+}));
+
 }
 
 export default async function ParticipateSection() {
