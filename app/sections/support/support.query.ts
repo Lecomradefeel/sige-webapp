@@ -4,16 +4,18 @@ export const SUPPORT_QUERY = `
       enabled
       title
       intro
+      maxItems
     }
-    allSupportOptions(orderBy: priority_ASC, first: 12) {
+    allSupportOptions(orderBy: priority_ASC, first: 50) {
       id
+      enabled
+      priority
+      label
       title
       excerpt
       body
       link
       ctaLabel
-      priority
-      isEnabled
     }
   }
 `;
