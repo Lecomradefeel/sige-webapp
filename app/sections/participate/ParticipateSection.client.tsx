@@ -5,7 +5,8 @@ import type { EventItem } from "./types";
 import ParticipateModal from "./ParticipateModal";
 import ParticipateCalendarModal from "./ParticipateCalendarModal";
 
-function formatRomeDate(iso: string) {
+function formatRomeDate(iso?: string | null) {
+  if (!iso) return "";
   try {
     return new Intl.DateTimeFormat("it-IT", {
       weekday: "short",
@@ -20,10 +21,14 @@ function formatRomeDate(iso: string) {
   }
 }
 
-export default function ParticipateSectionClient({ events }: { events: EventItem[] }) {
+export default function ParticipateSectionClient({
+  events,
+}: {
+  events: EventItem[];
+}) {
   const top = useMemo(() => events.slice(0, 5), [events]);
 
-  const [main, setMain] = useState<EventItem>(top[0]);
+  const [main, setMain] = useState<EventItem | null>(top[0] ?? null);
   const [left, setLeft] = useState<EventItem[]>(top.slice(1, 5));
 
   // swap animation state
@@ -34,7 +39,7 @@ export default function ParticipateSectionClient({ events }: { events: EventItem
   const [calendarOpen, setCalendarOpen] = useState(false);
 
   const onSwap = (clicked: EventItem) => {
-    if (clicked.id === main.id) return;
+    if (!main || clicked.id === main.id) return;
 
     setSwapId(clicked.id);
 
@@ -44,7 +49,7 @@ export default function ParticipateSectionClient({ events }: { events: EventItem
         const idx = prev.findIndex((x) => x.id === clicked.id);
         if (idx === -1) return prev;
         const next = [...prev];
-        next[idx] = main;
+        next[idx] = main; // safe: main non è null (guard sopra)
         return next;
       });
       setMain(clicked);
@@ -52,6 +57,9 @@ export default function ParticipateSectionClient({ events }: { events: EventItem
 
     window.setTimeout(() => setSwapId(null), 520);
   };
+
+  // Se non ci sono eventi, non renderizzare la sezione (o metti un placeholder)
+  if (!main) return null;
 
   return (
     <section style={{ marginTop: 56 }}>
@@ -94,7 +102,9 @@ export default function ParticipateSectionClient({ events }: { events: EventItem
                   alignItems: "center",
                   transition:
                     "transform 260ms ease, opacity 260ms ease, border-color 220ms ease, box-shadow 220ms ease",
-                  transform: isSwapping ? "translateY(6px) scale(0.985)" : "translateY(0) scale(1)",
+                  transform: isSwapping
+                    ? "translateY(6px) scale(0.985)"
+                    : "translateY(0) scale(1)",
                   opacity: isSwapping ? 0.85 : 1,
                   boxShadow: "none",
                 }}
@@ -127,9 +137,13 @@ export default function ParticipateSectionClient({ events }: { events: EventItem
                   <div style={{ fontSize: 12, opacity: 0.7 }}>
                     {formatRomeDate(e.startsAt)}
                   </div>
-                  <div style={{ fontWeight: 900, marginTop: 4, lineHeight: 1.2 }}>{e.title}</div>
+                  <div style={{ fontWeight: 900, marginTop: 4, lineHeight: 1.2 }}>
+                    {e.title}
+                  </div>
                   {e.excerpt ? (
-                    <div style={{ fontSize: 13, opacity: 0.8, marginTop: 6 }}>{e.excerpt}</div>
+                    <div style={{ fontSize: 13, opacity: 0.8, marginTop: 6 }}>
+                      {e.excerpt}
+                    </div>
                   ) : null}
                 </div>
               </button>
@@ -176,12 +190,26 @@ export default function ParticipateSectionClient({ events }: { events: EventItem
                 {formatRomeDate(main.startsAt)}
               </div>
 
-              <div style={{ fontSize: 28, fontWeight: 950, marginTop: 10, lineHeight: 1.1 }}>
+              <div
+                style={{
+                  fontSize: 28,
+                  fontWeight: 950,
+                  marginTop: 10,
+                  lineHeight: 1.1,
+                }}
+              >
                 {main.title}
               </div>
 
               {main.excerpt ? (
-                <div style={{ marginTop: 10, fontSize: 15, opacity: 0.9, lineHeight: 1.45 }}>
+                <div
+                  style={{
+                    marginTop: 10,
+                    fontSize: 15,
+                    opacity: 0.9,
+                    lineHeight: 1.45,
+                  }}
+                >
                   {main.excerpt}
                 </div>
               ) : null}
@@ -218,7 +246,8 @@ export default function ParticipateSectionClient({ events }: { events: EventItem
             color: "inherit",
             cursor: "pointer",
             fontWeight: 900,
-            transition: "transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease",
+            transition:
+              "transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease",
           }}
           onPointerEnter={(e) => {
             const el = e.currentTarget as HTMLButtonElement;
@@ -237,7 +266,14 @@ export default function ParticipateSectionClient({ events }: { events: EventItem
         </button>
       </div>
 
-      <ParticipateModal open={detailOpen} event={main} onClose={() => setDetailOpen(false)} />
+      {/* Modali */}
+      {main ? (
+        <ParticipateModal
+          open={detailOpen}
+          event={main}
+          onClose={() => setDetailOpen(false)}
+        />
+      ) : null}
 
       <ParticipateCalendarModal
         open={calendarOpen}
