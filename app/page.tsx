@@ -1,4 +1,4 @@
-import Hero from "./components/Hero";
+import HeroSection from "./sections/hero/HeroSection.server";
 import FeaturedSection from "./components/FeaturedSection"; // o dov’è ora
 import NewsletterBanner from "./components/NewsletterBanner";
 import ParticipateSection from "./sections/participate/ParticipateSection.server";
