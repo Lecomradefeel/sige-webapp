@@ -1,33 +1,31 @@
 import HeroSection from "./sections/hero/HeroSection.server";
-import FeaturedSection from "./components/FeaturedSection"; // o dov’è ora
-import NewsletterBanner from "./components/NewsletterBanner";
+import FeaturedSection from "./sections/featuredsection/FeaturedSection.server";
+import NewsletterBanner from "./sections/newsletter/NewsletterBannerSection";
 import ParticipateSection from "./sections/participate/ParticipateSection.server";
 import SupportSection from "./sections/support/SupportSection.server";
-import NewsletterSection from "./sections/newsletter/NewsletterSection";
- // se ce l’hai
-// import InformatiSection from "./sections/news/InformatiSection.server";
+// import NewsSection from "./sections/news/NewsSection.server"; // quando lo fai
 
-export default function Home() {
-  const eventsEnabled = (process.env.EVENTS_ENABLED ?? "true").toLowerCase() === "true";
+export default async function Home() {
+  // se ti serve il feature flag lato server:
+  const eventsEnabled = process.env.EVENTS_ENABLED === "true";
 
   return (
     <main style={{ maxWidth: 1120, margin: "0 auto", padding: "32px 20px" }}>
-      <Hero eventsEnabled={eventsEnabled} />
+      <HeroSection eventsEnabled={eventsEnabled} />
 
       <FeaturedSection />
+
       <NewsletterBanner />
 
       <div id="partecipa">
         <ParticipateSection />
       </div>
 
-      <SupportSection />
-
-      {/* InformatiSection (news mensili) */}
-
-      <div id="newsletter">
-        <NewsletterSection />
+      <div id="sostienici">
+        <SupportSection />
       </div>
+
+      {/* <NewsSection /> */}
     </main>
   );
 }
