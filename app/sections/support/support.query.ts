@@ -19,4 +19,3 @@ export const SUPPORT_QUERY = `
     }
   }
 `;
-`;
