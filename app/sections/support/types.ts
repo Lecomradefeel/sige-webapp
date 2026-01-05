@@ -1,14 +1,14 @@
 export type SupportOption = {
   id: string;
-  enabled: boolean;
-  priority: number;
-  label?: string | null;
   title: string;
   excerpt?: string | null;
   body?: string | null;
-  link?: string | null;
   ctaLabel?: string | null;
+  priority?: number | null;
+  link?: { url: string } | null;
+  image?: { url: string; alt?: string | null } | null;
 };
+
 
 export type SupportSectionData = {
   enabled: boolean;

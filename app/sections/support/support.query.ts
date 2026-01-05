@@ -1,21 +1,22 @@
 export const SUPPORT_QUERY = `
   query {
-    supportSection {
-      enabled
-      title
-      intro
-      maxItems
-    }
-    allSupportOptions(orderBy: priority_ASC, first: 50) {
+    allSupportOptions(
+      filter: { is_enabled: { eq: true } }
+      orderBy: priority_ASC
+    ) {
       id
-      enabled
-      priority
-      label
       title
       excerpt
       body
-      link
-      ctaLabel
+      cta_label
+      priority
+      link {
+        url
+      }
+      image {
+        url
+        alt
+      }
     }
   }
 `;
