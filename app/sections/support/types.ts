@@ -1,5 +1,6 @@
 export type SupportOption = {
   id: string;
+  label?: string | null;
   title: string;
   excerpt?: string | null;
   body?: string | null;
