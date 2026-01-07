@@ -1,4 +1,8 @@
+"use client";
+
 export default function NewsletterSection() {
+  const brevoUrl = process.env.NEXT_PUBLIC_BREVO_NEWSLETTER_URL;
+
   return (
     <section
       id="newsletter"
@@ -19,17 +23,32 @@ export default function NewsletterSection() {
       </p>
 
       <div style={{ marginTop: 16 }}>
-        {/* TODO: qui incolleremo l'embed Brevo */}
-        <div
-          style={{
-            padding: 16,
-            borderRadius: 18,
-            border: "1px dashed rgba(255,255,255,0.25)",
-            opacity: 0.9,
-          }}
-        >
-          Qui inseriamo il form Brevo.
-        </div>
+        {brevoUrl ? (
+          <iframe
+            title="Iscrizione newsletter Brevo"
+            src={brevoUrl}
+            style={{
+              width: "100%",
+              minHeight: 320,
+              border: "none",
+              borderRadius: 18,
+              background: "rgba(255,255,255,0.02)",
+            }}
+            loading="lazy"
+          />
+        ) : (
+          <div
+            style={{
+              padding: 16,
+              borderRadius: 18,
+              border: "1px dashed rgba(255,255,255,0.25)",
+              opacity: 0.9,
+            }}
+          >
+            Configura NEXT_PUBLIC_BREVO_NEWSLETTER_URL per mostrare il form
+            Brevo.
+          </div>
+        )}
       </div>
     </section>
   );
