@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import GlassButton from "@/app/components/ui/GlassButton";
+import CTA from "@/app/components/ui/CTA";
 import Modal from "@/app/components/ui/Modal";
 
 type Props = {
@@ -18,47 +18,67 @@ export default function HeroSectionClient({ eventsEnabled, newsletterUrl }: Prop
     el?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
+  const handleSeguici = () => {
+    const el = document.getElementById("newsletter");
+    if (el) {
+      el?.scrollIntoView({ behavior: "smooth", block: "start" });
+      return;
+    }
+    setOpenNewsletter(true);
+  };
+
   return (
     <main style={{ maxWidth: 1120, margin: "0 auto", padding: "32px 20px" }}>
       <header style={{ padding: "72px 0 40px" }}>
         <div style={{ fontSize: 14, opacity: 0.78 }}>Sinistra Italiana · Genova</div>
 
-        <h1
+        <div
+          className="heroLayout"
           style={{
-            fontSize: 56,
-            lineHeight: 1.05,
-            margin: "12px 0 16px",
-            letterSpacing: -0.6,
+            display: "grid",
+            gridTemplateColumns: "minmax(0, 1fr) auto",
+            gap: 32,
+            alignItems: "end",
+            marginTop: 12,
           }}
         >
-          Genova merita di più.
-        </h1>
+          <div style={{ minWidth: 0 }}>
+            <h1
+              style={{
+                fontSize: 56,
+                lineHeight: 1.05,
+                margin: "0 0 16px",
+                letterSpacing: -0.6,
+              }}
+            >
+              Genova merita di più.
+            </h1>
 
-        <p style={{ fontSize: 18, maxWidth: 760, opacity: 0.92 }}>
-          Diritti, territorio, lavoro. Una politica utile, concreta, partecipata.
-        </p>
+            <p style={{ fontSize: 18, maxWidth: 760, opacity: 0.92 }}>
+              Diritti, territorio, lavoro. Una politica utile, concreta, partecipata.
+            </p>
+          </div>
 
-        <div style={{ marginTop: 22, display: "flex", gap: 12, flexWrap: "wrap" }}>
-          {/* TESSERATI */}
-          <a href="/tesserati" style={{ textDecoration: "none" }}>
-            <GlassButton style={{ background: "rgba(255,255,255,0.16)" }}>
-              Tesserati
-            </GlassButton>
-          </a>
-
-          {/* PARTECIPA (solo se enabled) */}
-          {eventsEnabled ? <GlassButton onClick={handlePartecipa}>Partecipa</GlassButton> : null}
-
-          {/* SEGUICI */}
-          <GlassButton
-            onClick={() => setOpenNewsletter(true)}
-            style={{
-              borderColor: "rgba(255,255,255,0.22)",
-              background: "rgba(0,0,0,0.16)",
-            }}
+          <div
+            className="heroCtas"
+            style={{ display: "grid", gap: 12, justifyItems: "start" }}
           >
-            Seguici
-          </GlassButton>
+            <CTA href="/tesserati" style={{ background: "rgba(255,255,255,0.16)" }}>
+              Tesserati
+            </CTA>
+
+            <CTA onClick={handlePartecipa} disabled={!eventsEnabled}>
+              Partecipa
+            </CTA>
+
+            <CTA
+              onClick={handleSeguici}
+              variant="ghost"
+              style={{ borderColor: "rgba(255,255,255,0.22)" }}
+            >
+              Seguici
+            </CTA>
+          </div>
         </div>
 
         <div style={{ marginTop: 14, fontSize: 13, opacity: 0.75 }}>
@@ -91,6 +111,19 @@ export default function HeroSectionClient({ eventsEnabled, newsletterUrl }: Prop
           />
         </div>
       </Modal>
+
+      <style>{`
+        @media (max-width: 880px) {
+          .heroLayout {
+            grid-template-columns: 1fr !important;
+          }
+
+          .heroCtas {
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            justify-items: stretch !important;
+          }
+        }
+      `}</style>
     </main>
   );
 }
