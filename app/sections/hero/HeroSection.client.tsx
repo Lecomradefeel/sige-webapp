@@ -40,23 +40,19 @@ export default function HeroSectionClient({ eventsEnabled, newsletterUrl }: Prop
 
         <div style={{ marginTop: 22, display: "flex", gap: 12, flexWrap: "wrap" }}>
           {/* TESSERATI */}
-          <a href="/tesserati" style={{ textDecoration: "none" }}>
-            <GlassButton style={{ background: "rgba(255,255,255,0.16)" }}>
-              Tesserati
-            </GlassButton>
-          </a>
+          <GlassButton href="/tesserati" variant="primary" size="md">
+            Tesserati
+          </GlassButton>
 
           {/* PARTECIPA (solo se enabled) */}
-          {eventsEnabled ? <GlassButton onClick={handlePartecipa}>Partecipa</GlassButton> : null}
+          {eventsEnabled ? (
+            <GlassButton onClick={handlePartecipa} variant="ghost" size="md">
+              Partecipa
+            </GlassButton>
+          ) : null}
 
           {/* SEGUICI */}
-          <GlassButton
-            onClick={() => setOpenNewsletter(true)}
-            style={{
-              borderColor: "rgba(255,255,255,0.22)",
-              background: "rgba(0,0,0,0.16)",
-            }}
-          >
+          <GlassButton onClick={() => setOpenNewsletter(true)} variant="ghost" size="md">
             Seguici
           </GlassButton>
         </div>

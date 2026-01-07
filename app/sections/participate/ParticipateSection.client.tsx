@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import type { EventItem } from "./types";
 import ParticipateModal from "./ParticipateModal";
 import ParticipateCalendarModal from "./ParticipateCalendarModal";
+import CTA from "@/app/components/ui/CTA";
 
 function formatRomeDate(iso?: string | null) {
   if (!iso) return "";
@@ -236,34 +237,9 @@ export default function ParticipateSectionClient({
 
       {/* CTA Tutti gli eventi */}
       <div style={{ display: "flex", justifyContent: "center", marginTop: 18 }}>
-        <button
-          onClick={() => setCalendarOpen(true)}
-          style={{
-            padding: "12px 16px",
-            borderRadius: 999,
-            border: "1px solid rgba(255,255,255,0.18)",
-            background: "rgba(255,255,255,0.03)",
-            color: "inherit",
-            cursor: "pointer",
-            fontWeight: 900,
-            transition:
-              "transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease",
-          }}
-          onPointerEnter={(e) => {
-            const el = e.currentTarget as HTMLButtonElement;
-            el.style.transform = "scale(1.02)";
-            el.style.borderColor = "rgba(255,255,255,0.30)";
-            el.style.boxShadow = "0 14px 40px rgba(0,0,0,0.45)";
-          }}
-          onPointerLeave={(e) => {
-            const el = e.currentTarget as HTMLButtonElement;
-            el.style.transform = "scale(1)";
-            el.style.borderColor = "rgba(255,255,255,0.18)";
-            el.style.boxShadow = "none";
-          }}
-        >
+        <CTA onClick={() => setCalendarOpen(true)} size="md">
           Tutti gli eventi
-        </button>
+        </CTA>
       </div>
 
       {/* Modali */}
