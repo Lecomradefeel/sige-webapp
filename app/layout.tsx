@@ -18,8 +18,6 @@ export default function RootLayout({
           margin: 0,
           fontFamily:
             "-apple-system, BlinkMacSystemFont, Segoe UI, Inter, Helvetica, Arial, sans-serif",
-          background: "#000",
-          color: "#fff",
         }}
       >
         {/* HEADER */}
@@ -28,9 +26,10 @@ export default function RootLayout({
             position: "sticky",
             top: 0,
             zIndex: 50,
-            background: "rgba(0,0,0,0.85)",
-            backdropFilter: "blur(8px)",
-            borderBottom: "1px solid rgba(255,255,255,0.1)",
+            background: "rgba(24,0,6,0.65)",
+            backdropFilter: "blur(16px)",
+            borderBottom: "1px solid rgba(255,255,255,0.12)",
+            boxShadow: "0 16px 40px rgba(10,0,4,0.35)",
           }}
         >
           <div
@@ -77,12 +76,13 @@ export default function RootLayout({
               <a
                 href="/sostieni"
                 style={{
-                  color: "#000",
-                  background: "#fff",
+                  color: "#fff",
+                  background: "var(--accent)",
                   padding: "6px 10px",
                   borderRadius: 10,
                   textDecoration: "none",
                   fontWeight: 600,
+                  border: "1px solid rgba(255,255,255,0.2)",
                 }}
               >
                 Sostieni
@@ -99,8 +99,10 @@ export default function RootLayout({
           style={{
             marginTop: 80,
             padding: "40px 20px",
-            borderTop: "1px solid rgba(255,255,255,0.1)",
-            opacity: 0.8,
+            borderTop: "1px solid rgba(255,255,255,0.12)",
+            background: "rgba(18,0,4,0.45)",
+            backdropFilter: "blur(14px)",
+            opacity: 0.85,
           }}
         >
           <div style={{ maxWidth: 1120, margin: "0 auto", fontSize: 14 }}>

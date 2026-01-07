@@ -34,7 +34,7 @@ export default function Modal({ open, onClose, title, children }: ModalProps) {
         position: "fixed",
         inset: 0,
         zIndex: 9999,
-        background: "rgba(0,0,0,0.55)",
+        background: "rgba(8,0,3,0.6)",
         display: "grid",
         placeItems: "center",
         padding: 20,
@@ -45,10 +45,10 @@ export default function Modal({ open, onClose, title, children }: ModalProps) {
         style={{
           width: "min(920px, 100%)",
           borderRadius: 22,
-          border: "1px solid rgba(255,255,255,0.22)",
-          background: "rgba(20,20,20,0.78)",
-          backdropFilter: "blur(14px)",
-          WebkitBackdropFilter: "blur(14px)",
+          border: "1px solid rgba(255,255,255,0.18)",
+          background: "rgba(34,0,8,0.78)",
+          backdropFilter: "blur(18px)",
+          WebkitBackdropFilter: "blur(18px)",
           color: "#fff",
           padding: 18,
         }}
@@ -60,7 +60,7 @@ export default function Modal({ open, onClose, title, children }: ModalProps) {
             onClick={onClose}
             style={{
               border: "1px solid rgba(255,255,255,0.25)",
-              background: "rgba(255,255,255,0.08)",
+              background: "rgba(255,255,255,0.1)",
               color: "#fff",
               borderRadius: 12,
               padding: "6px 10px",

@@ -62,7 +62,18 @@ export default function ParticipateSectionClient({
   if (!main) return null;
 
   return (
-    <section style={{ marginTop: 56 }}>
+    <section
+      style={{
+        marginTop: 56,
+        padding: 24,
+        borderRadius: 24,
+        background: "var(--glass-bg)",
+        border: "1px solid var(--glass-border)",
+        backdropFilter: "blur(16px)",
+        WebkitBackdropFilter: "blur(16px)",
+        boxShadow: "var(--glass-shadow)",
+      }}
+    >
       <div style={{ marginBottom: 16 }}>
         <h2 style={{ fontSize: 28, margin: 0 }}>Partecipa</h2>
         <div style={{ fontSize: 14, opacity: 0.7 }}>
@@ -92,8 +103,8 @@ export default function ParticipateSectionClient({
                   textAlign: "left",
                   padding: 14,
                   borderRadius: 18,
-                  border: "1px solid rgba(255,255,255,0.15)",
-                  background: "rgba(255,255,255,0.02)",
+                  border: "1px solid var(--glass-border)",
+                  background: "var(--glass-bg)",
                   color: "inherit",
                   cursor: "pointer",
                   display: "grid",
@@ -106,17 +117,19 @@ export default function ParticipateSectionClient({
                     ? "translateY(6px) scale(0.985)"
                     : "translateY(0) scale(1)",
                   opacity: isSwapping ? 0.85 : 1,
-                  boxShadow: "none",
+                  boxShadow: "var(--glass-shadow-soft)",
+                  backdropFilter: "blur(14px)",
+                  WebkitBackdropFilter: "blur(14px)",
                 }}
                 onPointerEnter={(ev) => {
                   const el = ev.currentTarget as HTMLButtonElement;
-                  el.style.borderColor = "rgba(255,255,255,0.28)";
-                  el.style.boxShadow = "0 14px 40px rgba(0,0,0,0.45)";
+                  el.style.borderColor = "rgba(255,255,255,0.3)";
+                  el.style.boxShadow = "0 16px 42px rgba(10,0,4,0.45)";
                 }}
                 onPointerLeave={(ev) => {
                   const el = ev.currentTarget as HTMLButtonElement;
-                  el.style.borderColor = "rgba(255,255,255,0.15)";
-                  el.style.boxShadow = "none";
+                  el.style.borderColor = "var(--glass-border)";
+                  el.style.boxShadow = "var(--glass-shadow-soft)";
                 }}
               >
                 {e.image?.url ? (
@@ -157,24 +170,26 @@ export default function ParticipateSectionClient({
           style={{
             textAlign: "left",
             borderRadius: 24,
-            border: "1px solid rgba(255,255,255,0.18)",
-            background: "rgba(255,255,255,0.03)",
+            border: "1px solid var(--glass-border)",
+            background: "var(--glass-bg-strong)",
             padding: 18,
             color: "inherit",
             cursor: "pointer",
             overflow: "hidden",
             transition: "border-color 220ms ease, box-shadow 220ms ease",
-            boxShadow: "0 22px 70px rgba(0,0,0,0.55)",
+            boxShadow: "var(--glass-shadow)",
+            backdropFilter: "blur(18px)",
+            WebkitBackdropFilter: "blur(18px)",
           }}
           onPointerEnter={(ev) => {
             const el = ev.currentTarget as HTMLButtonElement;
-            el.style.borderColor = "rgba(255,255,255,0.32)";
-            el.style.boxShadow = "0 28px 90px rgba(0,0,0,0.65)";
+            el.style.borderColor = "rgba(255,255,255,0.35)";
+            el.style.boxShadow = "0 30px 90px rgba(10,0,4,0.6)";
           }}
           onPointerLeave={(ev) => {
             const el = ev.currentTarget as HTMLButtonElement;
-            el.style.borderColor = "rgba(255,255,255,0.18)";
-            el.style.boxShadow = "0 22px 70px rgba(0,0,0,0.55)";
+            el.style.borderColor = "var(--glass-border)";
+            el.style.boxShadow = "var(--glass-shadow)";
           }}
         >
           <div
@@ -241,24 +256,26 @@ export default function ParticipateSectionClient({
           style={{
             padding: "12px 16px",
             borderRadius: 999,
-            border: "1px solid rgba(255,255,255,0.18)",
-            background: "rgba(255,255,255,0.03)",
+            border: "1px solid var(--glass-border)",
+            background: "var(--glass-bg)",
             color: "inherit",
             cursor: "pointer",
             fontWeight: 900,
             transition:
               "transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease",
+            backdropFilter: "blur(12px)",
+            WebkitBackdropFilter: "blur(12px)",
           }}
           onPointerEnter={(e) => {
             const el = e.currentTarget as HTMLButtonElement;
             el.style.transform = "scale(1.02)";
-            el.style.borderColor = "rgba(255,255,255,0.30)";
-            el.style.boxShadow = "0 14px 40px rgba(0,0,0,0.45)";
+            el.style.borderColor = "rgba(255,255,255,0.32)";
+            el.style.boxShadow = "0 16px 44px rgba(10,0,4,0.45)";
           }}
           onPointerLeave={(e) => {
             const el = e.currentTarget as HTMLButtonElement;
             el.style.transform = "scale(1)";
-            el.style.borderColor = "rgba(255,255,255,0.18)";
+            el.style.borderColor = "var(--glass-border)";
             el.style.boxShadow = "none";
           }}
         >
