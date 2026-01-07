@@ -1,6 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import CTA from "@/app/components/ui/CTA";
+import GlassCard from "@/app/components/ui/GlassCard";
 import type { SupportSectionData } from "./types";
 
 function clampText(s?: string | null) {
@@ -32,19 +34,21 @@ export default function SupportSectionClient({ data }: { data: SupportSectionDat
           const isOpen = openId === opt.id;
 
           return (
-            <article
+            <GlassCard
               key={opt.id}
               onMouseEnter={() => setOpenId(opt.id)}
               onMouseLeave={() => setOpenId(null)}
               onClick={() => setOpenId((prev) => (prev === opt.id ? null : opt.id))}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  setOpenId((prev) => (prev === opt.id ? null : opt.id));
+                }
+              }}
               role="button"
               tabIndex={0}
               style={{
                 cursor: "pointer",
-                padding: 18,
-                borderRadius: 22,
-                border: "1px solid rgba(255,255,255,0.18)",
-                background: "rgba(255,255,255,0.02)",
                 transition: "transform 220ms ease, border-color 220ms ease",
                 transform: isOpen ? "translateY(-2px)" : "translateY(0)",
                 outline: "none",
@@ -82,23 +86,14 @@ export default function SupportSectionClient({ data }: { data: SupportSectionDat
 
                 {opt.link ? (
                   <div style={{ marginTop: 12 }}>
-                    <a
-                      href={opt.link}
+                    <CTA
+                      href={opt.link.url}
                       target="_blank"
                       rel="noreferrer"
                       onClick={(e) => e.stopPropagation()}
-                      style={{
-                        display: "inline-block",
-                        padding: "10px 12px",
-                        borderRadius: 14,
-                        background: "#fff",
-                        color: "#000",
-                        fontWeight: 900,
-                        textDecoration: "none",
-                      }}
                     >
                       {opt.ctaLabel ?? "Apri"}
-                    </a>
+                    </CTA>
                   </div>
                 ) : null}
 
@@ -108,7 +103,7 @@ export default function SupportSectionClient({ data }: { data: SupportSectionDat
               <div style={{ fontSize: 12, opacity: 0.6, marginTop: 10 }}>
                 {isOpen ? "Tocca per chiudere" : "Tocca per leggere di più"}
               </div>
-            </article>
+            </GlassCard>
           );
         })}
       </div>

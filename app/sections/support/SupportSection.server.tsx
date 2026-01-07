@@ -36,9 +36,7 @@ async function getSupportData(): Promise<SupportSectionData | null> {
   return {
     enabled,
     title: section?.title ?? "Sostienici",
-    intro:
-      section?.intro ??
-      "Il nostro lavoro sul territorio vive di tempo, competenze e sostegno concreto.",
+    intro: section?.intro ?? "Perché sostenere SI",
     maxItems,
     options: sliced.map((o) => ({
       id: o.id,
