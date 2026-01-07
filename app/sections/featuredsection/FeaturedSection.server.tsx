@@ -1,59 +1,56 @@
+import FeaturedSectionClient from "./FeaturedSection.client";
+import type { FeaturedItem } from "./types";
+
+const featuredItems: FeaturedItem[] = [
+  {
+    id: "primaria",
+    label: "CAMPAGNA",
+    title: "Primaria",
+    preview:
+      "Un percorso aperto per costruire la prossima agenda condivisa: ascolto, territorio e proposte.",
+    href: "/campagna/primaria",
+    image: {
+      url: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1400&q=80",
+      alt: "Persone che lavorano insieme",
+    },
+  },
+  {
+    id: "secondaria",
+    label: "FOCUS",
+    title: "Secondaria",
+    preview:
+      "Azioni concrete su scuola, mobilità e servizi di prossimità: cosa stiamo facendo oggi.",
+    href: "/focus/secondaria",
+    image: {
+      url: "https://images.unsplash.com/photo-1485217988980-11786ced9454?auto=format&fit=crop&w=900&q=80",
+      alt: "Lavoro di squadra",
+    },
+  },
+  {
+    id: "terziaria",
+    label: "APPUNTI",
+    title: "Terziaria",
+    preview:
+      "Gli ultimi aggiornamenti dal gruppo di lavoro con priorità e prossime tappe.",
+    href: "/appunti/terziaria",
+    image: {
+      url: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=900&q=80",
+      alt: "Persone al computer",
+    },
+  },
+];
+
 export default function FeaturedSectionServer() {
+  const [main, ...side] = featuredItems;
+
+  if (!main) return null;
+
   return (
-    <section style={{ marginTop: 26 }}>
-      <div style={{ marginBottom: 16 }}>
-        <h2 style={{ fontSize: 28, margin: 0 }}>In evidenza</h2>
-        <div style={{ fontSize: 14, opacity: 0.7 }}>
-          Le priorità politiche di questo momento
-        </div>
-      </div>
-
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "2fr 1fr",
-          gap: 20,
-        }}
-      >
-        <article
-          style={{
-            minHeight: 180,
-            padding: 28,
-            borderRadius: 28,
-            border: "1px solid rgba(255,255,255,0.15)",
-          }}
-        >
-          <div style={{ fontSize: 12, opacity: 0.6 }}>CAMPAGNA</div>
-          <h3 style={{ fontSize: 30, margin: "12px 0" }}>Primaria</h3>
-          <p style={{ maxWidth: 560, opacity: 0.85 }}>
-            Placeholder: qui ricolleghiamo DatoCMS.
-          </p>
-        </article>
-
-        <div style={{ display: "grid", gap: 20 }}>
-          <article
-            style={{
-              minHeight: 80,
-              padding: 20,
-              borderRadius: 22,
-              border: "1px solid rgba(255,255,255,0.15)",
-            }}
-          >
-            <strong>Secondaria</strong>
-          </article>
-
-          <article
-            style={{
-              minHeight: 80,
-              padding: 20,
-              borderRadius: 22,
-              border: "1px solid rgba(255,255,255,0.15)",
-            }}
-          >
-            <strong>Terziaria</strong>
-          </article>
-        </div>
-      </div>
-    </section>
+    <FeaturedSectionClient
+      title="In evidenza"
+      subtitle="Le priorità politiche di questo momento"
+      mainItem={main}
+      sideItems={side}
+    />
   );
 }
