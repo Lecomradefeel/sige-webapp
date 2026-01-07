@@ -13,7 +13,18 @@ export default function SupportSectionClient({ data }: { data: SupportSectionDat
   const options = useMemo(() => data.options.slice(0, 6), [data.options]);
 
   return (
-    <section style={{ marginTop: 44 }}>
+    <section
+      style={{
+        marginTop: 44,
+        padding: 24,
+        borderRadius: 24,
+        background: "var(--glass-bg)",
+        border: "1px solid var(--glass-border)",
+        backdropFilter: "blur(16px)",
+        WebkitBackdropFilter: "blur(16px)",
+        boxShadow: "var(--glass-shadow)",
+      }}
+    >
       <div style={{ marginBottom: 16 }}>
         <h2 style={{ fontSize: 28, margin: 0 }}>{data.title ?? "Sostienici"}</h2>
         <div style={{ fontSize: 14, opacity: 0.75, maxWidth: 860 }}>
@@ -43,12 +54,15 @@ export default function SupportSectionClient({ data }: { data: SupportSectionDat
                 cursor: "pointer",
                 padding: 18,
                 borderRadius: 22,
-                border: "1px solid rgba(255,255,255,0.18)",
-                background: "rgba(255,255,255,0.02)",
+                border: "1px solid var(--glass-border)",
+                background: "var(--glass-bg)",
                 transition: "transform 220ms ease, border-color 220ms ease",
                 transform: isOpen ? "translateY(-2px)" : "translateY(0)",
                 outline: "none",
                 userSelect: "none",
+                boxShadow: "var(--glass-shadow-soft)",
+                backdropFilter: "blur(14px)",
+                WebkitBackdropFilter: "blur(14px)",
               }}
             >
               <div style={{ fontSize: 12, opacity: 0.7 }}>
@@ -87,15 +101,8 @@ export default function SupportSectionClient({ data }: { data: SupportSectionDat
                       target="_blank"
                       rel="noreferrer"
                       onClick={(e) => e.stopPropagation()}
-                      style={{
-                        display: "inline-block",
-                        padding: "10px 12px",
-                        borderRadius: 14,
-                        background: "#fff",
-                        color: "#000",
-                        fontWeight: 900,
-                        textDecoration: "none",
-                      }}
+                      className="primary-cta"
+                      style={{ padding: "10px 12px", borderRadius: 14 }}
                     >
                       {opt.ctaLabel ?? "Apri"}
                     </a>

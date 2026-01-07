@@ -5,9 +5,11 @@ export default function NewsletterBanner() {
         marginTop: 26,
         padding: 20,
         borderRadius: 22,
-        border: "1px solid rgba(255,255,255,0.18)",
-        background:
-          "linear-gradient(90deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02))",
+        border: "1px solid var(--glass-border)",
+        background: "var(--glass-bg-strong)",
+        backdropFilter: "blur(16px)",
+        WebkitBackdropFilter: "blur(16px)",
+        boxShadow: "var(--glass-shadow-soft)",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
@@ -27,16 +29,8 @@ export default function NewsletterBanner() {
 
       <a
         href="#newsletter"
-        style={{
-          display: "inline-block",
-          padding: "12px 16px",
-          borderRadius: 16,
-          background: "#fff",
-          color: "#000",
-          fontWeight: 900,
-          textDecoration: "none",
-          whiteSpace: "nowrap",
-        }}
+        className="primary-cta"
+        style={{ whiteSpace: "nowrap" }}
       >
         Iscriviti
       </a>
