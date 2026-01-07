@@ -1,8 +1,8 @@
 import HeroSection from "./sections/hero/HeroSection.server";
 import FeaturedSection from "./sections/featuredsection/FeaturedSection.server";
 import NewsletterBanner from "./sections/newsletter/NewsletterBannerSection";
-
 import ParticipateSection from "./sections/participate/ParticipateSection.server";
+import NewsSection from "./sections/news/NewsSection.server";
 import SupportSection from "./sections/support/SupportSection.server";
 
 export default async function Home() {
@@ -20,6 +20,8 @@ export default async function Home() {
         <ParticipateSection />
       </div>
 
+      <NewsSection />
+
       <div id="sostienici">
         <SupportSection />
       </div>
@@ -28,4 +30,3 @@ export default async function Home() {
     </main>
   );
 }
-
