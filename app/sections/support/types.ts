@@ -3,8 +3,9 @@ export type SupportOption = {
   title: string;
   excerpt?: string | null;
   body?: string | null;
-  ctaLabel?: string | null;
+  cta_label?: string | null;
   priority?: number | null;
+  is_enabled?: boolean | null;
   link?: { url: string } | null;
   image?: { url: string; alt?: string | null } | null;
 };
