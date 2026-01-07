@@ -1,3 +1,5 @@
+import GlassCard from "@/app/components/ui/GlassCard";
+
 export default function FeaturedSectionServer() {
   return (
     <section style={{ marginTop: 26 }}>
@@ -15,43 +17,26 @@ export default function FeaturedSectionServer() {
           gap: 20,
         }}
       >
-        <article
-          style={{
-            minHeight: 180,
-            padding: 28,
-            borderRadius: 28,
-            border: "1px solid rgba(255,255,255,0.15)",
-          }}
+        <GlassCard
+          as="article"
+          size="lg"
+          style={{ minHeight: 180, borderRadius: 28 }}
         >
           <div style={{ fontSize: 12, opacity: 0.6 }}>CAMPAGNA</div>
           <h3 style={{ fontSize: 30, margin: "12px 0" }}>Primaria</h3>
           <p style={{ maxWidth: 560, opacity: 0.85 }}>
             Placeholder: qui ricolleghiamo DatoCMS.
           </p>
-        </article>
+        </GlassCard>
 
         <div style={{ display: "grid", gap: 20 }}>
-          <article
-            style={{
-              minHeight: 80,
-              padding: 20,
-              borderRadius: 22,
-              border: "1px solid rgba(255,255,255,0.15)",
-            }}
-          >
+          <GlassCard as="article" size="sm" style={{ minHeight: 80 }}>
             <strong>Secondaria</strong>
-          </article>
+          </GlassCard>
 
-          <article
-            style={{
-              minHeight: 80,
-              padding: 20,
-              borderRadius: 22,
-              border: "1px solid rgba(255,255,255,0.15)",
-            }}
-          >
+          <GlassCard as="article" size="sm" style={{ minHeight: 80 }}>
             <strong>Terziaria</strong>
-          </article>
+          </GlassCard>
         </div>
       </div>
     </section>
