@@ -1,11 +1,12 @@
 export type SupportOption = {
   id: string;
+  enabled?: boolean;
   title: string;
   excerpt?: string | null;
   body?: string | null;
   ctaLabel?: string | null;
   priority?: number | null;
-  link?: { url: string } | null;
+  link?: string | null;
   image?: { url: string; alt?: string | null } | null;
 };
 
