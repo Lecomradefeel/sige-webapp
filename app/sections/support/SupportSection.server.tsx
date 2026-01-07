@@ -27,7 +27,7 @@ async function getSupportData(): Promise<SupportSectionData | null> {
   const enabled = section?.enabled ?? true;
 
   const options = allOptions
-    .filter((o) => o?.enabled !== false)
+    .filter((o) => o?.is_enabled !== false)
     .sort((a, b) => (a?.priority ?? 999) - (b?.priority ?? 999));
 
   const maxItems = section?.maxItems ?? null;
@@ -42,14 +42,13 @@ async function getSupportData(): Promise<SupportSectionData | null> {
     maxItems,
     options: sliced.map((o) => ({
       id: o.id,
-      enabled: o.enabled !== false,
+      is_enabled: o.is_enabled ?? true,
       priority: o.priority ?? 999,
-      label: o.label ?? null,
       title: o.title,
       excerpt: o.excerpt ?? null,
       body: o.body ?? null,
       link: o.link ?? null,
-      ctaLabel: o.ctaLabel ?? null,
+      cta_label: o.cta_label ?? null,
     })),
   };
 }
