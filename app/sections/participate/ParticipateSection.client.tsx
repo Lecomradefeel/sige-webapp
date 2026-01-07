@@ -33,6 +33,7 @@ export default function ParticipateSectionClient({
 
   // swap animation state
   const [swapId, setSwapId] = useState<string | null>(null);
+  const isMainSwapping = swapId !== null;
 
   // modals
   const [detailOpen, setDetailOpen] = useState(false);
@@ -74,7 +75,7 @@ export default function ParticipateSectionClient({
         className="eventsGrid"
         style={{
           display: "grid",
-          gridTemplateColumns: "1.1fr 2fr",
+          gridTemplateColumns: "1fr 2.1fr",
           gap: 20,
           alignItems: "stretch",
         }}
@@ -163,7 +164,9 @@ export default function ParticipateSectionClient({
             color: "inherit",
             cursor: "pointer",
             overflow: "hidden",
-            transition: "border-color 220ms ease, box-shadow 220ms ease",
+            transition: "border-color 220ms ease, box-shadow 220ms ease, transform 260ms ease, opacity 260ms ease",
+            transform: isMainSwapping ? "scale(0.985)" : "scale(1)",
+            opacity: isMainSwapping ? 0.9 : 1,
             boxShadow: "0 22px 70px rgba(0,0,0,0.55)",
           }}
           onPointerEnter={(ev) => {
