@@ -39,21 +39,24 @@ export default function ParticipateSectionClient({
   const [calendarOpen, setCalendarOpen] = useState(false);
 
   const onSwap = (clicked: EventItem) => {
-    if (!main || clicked.id === main.id) return;
+    if (!main || clicked.id === main.id || swapId) return;
 
     setSwapId(clicked.id);
 
-    // piccolo delay per far partire la transizione (leggera)
-    window.setTimeout(() => {
-      setLeft((prev) => {
-        const idx = prev.findIndex((x) => x.id === clicked.id);
-        if (idx === -1) return prev;
-        const next = [...prev];
-        next[idx] = main; // safe: main non è null (guard sopra)
+    setMain((prevMain) => {
+      if (!prevMain) return prevMain;
+
+      setLeft((prevLeft) => {
+        const idx = prevLeft.findIndex((x) => x.id === clicked.id);
+        if (idx === -1) return prevLeft;
+
+        const next = [...prevLeft];
+        next[idx] = prevMain;
         return next;
       });
-      setMain(clicked);
-    }, 120);
+
+      return clicked;
+    });
 
     window.setTimeout(() => setSwapId(null), 520);
   };
