@@ -42,14 +42,13 @@ async function getSupportData(): Promise<SupportSectionData | null> {
     maxItems,
     options: sliced.map((o) => ({
       id: o.id,
-      enabled: o.enabled !== false,
       priority: o.priority ?? 999,
       label: o.label ?? null,
       title: o.title,
       excerpt: o.excerpt ?? null,
       body: o.body ?? null,
-      link: o.link ?? null,
-      ctaLabel: o.ctaLabel ?? null,
+      link: o.link?.url ?? null,
+      ctaLabel: o.cta_label ?? o.ctaLabel ?? null,
     })),
   };
 }
