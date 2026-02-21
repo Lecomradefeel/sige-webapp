@@ -9,23 +9,38 @@ export default async function Home() {
   const eventsEnabled = process.env.EVENTS_ENABLED === "true";
 
   return (
-    <main style={{ maxWidth: 1120, margin: "0 auto", padding: "32px 20px" }}>
-      <HeroSection eventsEnabled={eventsEnabled} />
+    <main className="snap-page">
+      <section className="snap-section">
+        <div className="snap-inner">
+          <HeroSection eventsEnabled={eventsEnabled} />
+        </div>
+      </section>
 
-      <FeaturedSection />
+      <section className="snap-section">
+        <div className="snap-inner">
+          <FeaturedSection />
+        </div>
+      </section>
 
-      <NewsletterBanner />
+      <section className="snap-section">
+        <div className="snap-inner">
+          <NewsletterBanner />
+        </div>
+      </section>
 
-      <div id="partecipa">
-        <ParticipateSection />
-      </div>
+      <section id="partecipa" className="snap-section">
+        <div className="snap-inner">
+          <ParticipateSection />
+        </div>
+      </section>
 
-      <div id="sostienici">
-        <SupportSection />
-      </div>
+      <section id="sostienici" className="snap-section">
+        <div className="snap-inner">
+          <SupportSection />
+        </div>
+      </section>
 
       <div id="newsletter" />
     </main>
   );
 }
-

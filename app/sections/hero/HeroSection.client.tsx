@@ -19,7 +19,7 @@ export default function HeroSectionClient({ eventsEnabled, newsletterUrl }: Prop
   };
 
   return (
-    <main style={{ maxWidth: 1120, margin: "0 auto", padding: "32px 20px" }}>
+    <section>
       <header style={{ padding: "72px 0 40px" }}>
         <div style={{ fontSize: 14, opacity: 0.78 }}>Sinistra Italiana · Genova</div>
 
@@ -91,6 +91,6 @@ export default function HeroSectionClient({ eventsEnabled, newsletterUrl }: Prop
           />
         </div>
       </Modal>
-    </main>
+    </section>
   );
 }
