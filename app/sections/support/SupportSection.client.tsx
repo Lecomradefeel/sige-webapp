@@ -52,12 +52,20 @@ export default function SupportSectionClient({ data }: { data: SupportSectionDat
               }}
             >
               <div style={{ fontSize: 12, opacity: 0.7 }}>
-                {opt.label ?? "MODALITÀ"}
+                MODALITÀ
               </div>
 
               <div style={{ fontSize: 18, fontWeight: 900, marginTop: 6 }}>
                 {opt.title}
               </div>
+
+              {opt.image?.url ? (
+                <img
+                  src={opt.image.url}
+                  alt={opt.image.alt ?? opt.title}
+                  style={{ width: "100%", borderRadius: 14, marginTop: 10 }}
+                />
+              ) : null}
 
               {opt.excerpt ? (
                 <div style={{ fontSize: 14, opacity: 0.82, marginTop: 6 }}>
@@ -83,7 +91,7 @@ export default function SupportSectionClient({ data }: { data: SupportSectionDat
                 {opt.link ? (
                   <div style={{ marginTop: 12 }}>
                     <a
-                      href={opt.link}
+                      href={opt.link.url}
                       target="_blank"
                       rel="noreferrer"
                       onClick={(e) => e.stopPropagation()}
