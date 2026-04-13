@@ -1,18 +1,20 @@
 export const SUPPORT_QUERY = `
   query {
-    allSupportOptions(
-      filter: { is_enabled: { eq: true } }
-      orderBy: priority_ASC
-    ) {
+    supportSection {
+      enabled
+      title
+      intro
+    }
+
+    allSupportOptions(orderBy: priority_ASC) {
       id
+      enabled
       title
       excerpt
       body
       cta_label
       priority
-      link {
-        url
-      }
+      link
       image {
         url
         alt

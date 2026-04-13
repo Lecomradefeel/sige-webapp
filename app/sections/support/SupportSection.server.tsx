@@ -1,6 +1,53 @@
 import SupportSectionClient from "./SupportSection.client";
 import { SUPPORT_QUERY } from "./support.query";
-import type { SupportSectionData } from "./types";
+import type { SupportOption, SupportSectionData } from "./types";
+
+type SupportOptionDTO = {
+  id?: string;
+  enabled?: boolean;
+  title?: string;
+  excerpt?: string | null;
+  body?: string | null;
+  cta_label?: string | null;
+  priority?: number | null;
+  link?: string | null;
+  image?: { url?: string | null; alt?: string | null } | null;
+};
+
+type SupportSectionDTO = {
+  enabled?: boolean;
+  title?: string | null;
+  intro?: string | null;
+};
+
+type SupportQueryResponse = {
+  data?: {
+    supportSection?: SupportSectionDTO | null;
+    allSupportOptions?: SupportOptionDTO[];
+  };
+  errors?: unknown;
+};
+
+function normalizeOption(raw: SupportOptionDTO): SupportOption | null {
+  if (!raw.id || !raw.title) return null;
+  if (raw.enabled === false) return null;
+
+  return {
+    id: raw.id,
+    title: raw.title,
+    excerpt: raw.excerpt ?? null,
+    body: raw.body ?? null,
+    ctaLabel: raw.cta_label ?? null,
+    priority: raw.priority ?? null,
+    link: raw.link ?? null,
+    image: raw.image?.url
+      ? {
+          url: raw.image.url,
+          alt: raw.image.alt ?? null,
+        }
+      : null,
+  };
+}
 
 async function getSupportData(): Promise<SupportSectionData | null> {
   const res = await fetch("https://graphql.datocms.com/", {
@@ -11,27 +58,23 @@ async function getSupportData(): Promise<SupportSectionData | null> {
     },
     body: JSON.stringify({ query: SUPPORT_QUERY }),
     next: { revalidate: 60 },
-  } as any);
+  });
 
-  const json = await res.json();
+  const json = (await res.json()) as SupportQueryResponse;
 
   if (!res.ok || json.errors) {
     console.error("DatoCMS Support error:", json.errors);
     return null;
   }
 
-  const section = json?.data?.supportSection ?? null;
-  const allOptions = (json?.data?.allSupportOptions ?? []) as any[];
+  const section = json.data?.supportSection ?? null;
+  const allOptions = json.data?.allSupportOptions ?? [];
 
-  // Se il singleton non esiste ancora, non rompiamo la home
   const enabled = section?.enabled ?? true;
-
   const options = allOptions
-    .filter((o) => o?.enabled !== false)
-    .sort((a, b) => (a?.priority ?? 999) - (b?.priority ?? 999));
-
-  const maxItems = section?.maxItems ?? null;
-  const sliced = Number.isFinite(maxItems) && maxItems > 0 ? options.slice(0, maxItems) : options;
+    .map(normalizeOption)
+    .filter((o): o is SupportOption => Boolean(o))
+    .sort((a, b) => (a.priority ?? 999) - (b.priority ?? 999));
 
   return {
     enabled,
@@ -39,28 +82,14 @@ async function getSupportData(): Promise<SupportSectionData | null> {
     intro:
       section?.intro ??
       "Il nostro lavoro sul territorio vive di tempo, competenze e sostegno concreto.",
-    maxItems,
-    options: sliced.map((o) => ({
-      id: o.id,
-      enabled: o.enabled !== false,
-      priority: o.priority ?? 999,
-      label: o.label ?? null,
-      title: o.title,
-      excerpt: o.excerpt ?? null,
-      body: o.body ?? null,
-      link: o.link ?? null,
-      ctaLabel: o.ctaLabel ?? null,
-    })),
+    options,
   };
 }
 
 export default async function SupportSection() {
   const data = await getSupportData();
 
-  // feature-flag CMS + fallback robusto
   if (!data?.enabled) return null;
-
-  // Se non ci sono opzioni, nascondi sezione (evita “vuoti”)
   if (!data.options.length) return null;
 
   return <SupportSectionClient data={data} />;
