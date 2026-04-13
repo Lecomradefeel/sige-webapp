@@ -4,12 +4,13 @@ import type { SupportOption, SupportSectionData } from "./types";
 
 type SupportOptionDTO = {
   id?: string;
+  enabled?: boolean;
   title?: string;
   excerpt?: string | null;
   body?: string | null;
-  ctaLabel?: string | null;
+  cta_label?: string | null;
   priority?: number | null;
-  link?: { url?: string | null } | null;
+  link?: string | null;
   image?: { url?: string | null; alt?: string | null } | null;
 };
 
@@ -17,8 +18,6 @@ type SupportSectionDTO = {
   enabled?: boolean;
   title?: string | null;
   intro?: string | null;
-  maxItems?: number | null;
-  options?: SupportOptionDTO[];
 };
 
 type SupportQueryResponse = {
@@ -31,15 +30,16 @@ type SupportQueryResponse = {
 
 function normalizeOption(raw: SupportOptionDTO): SupportOption | null {
   if (!raw.id || !raw.title) return null;
+  if (raw.enabled === false) return null;
 
   return {
     id: raw.id,
     title: raw.title,
     excerpt: raw.excerpt ?? null,
     body: raw.body ?? null,
-    ctaLabel: raw.ctaLabel ?? null,
+    ctaLabel: raw.cta_label ?? null,
     priority: raw.priority ?? null,
-    link: raw.link?.url ? { url: raw.link.url } : null,
+    link: raw.link ?? null,
     image: raw.image?.url
       ? {
           url: raw.image.url,
@@ -68,22 +68,13 @@ async function getSupportData(): Promise<SupportSectionData | null> {
   }
 
   const section = json.data?.supportSection ?? null;
-  const sectionOptions = section?.options ?? [];
   const allOptions = json.data?.allSupportOptions ?? [];
 
   const enabled = section?.enabled ?? true;
-  const baseOptions = sectionOptions.length ? sectionOptions : allOptions;
-
-  const options = baseOptions
+  const options = allOptions
     .map(normalizeOption)
     .filter((o): o is SupportOption => Boolean(o))
     .sort((a, b) => (a.priority ?? 999) - (b.priority ?? 999));
-
-  const maxItems = section?.maxItems ?? null;
-  const safeMaxItems = typeof maxItems === "number" && Number.isFinite(maxItems) && maxItems > 0
-    ? maxItems
-    : null;
-  const sliced = safeMaxItems ? options.slice(0, safeMaxItems) : options;
 
   return {
     enabled,
@@ -91,8 +82,7 @@ async function getSupportData(): Promise<SupportSectionData | null> {
     intro:
       section?.intro ??
       "Il nostro lavoro sul territorio vive di tempo, competenze e sostegno concreto.",
-    maxItems,
-    options: sliced,
+    options,
   };
 }
 

@@ -88,10 +88,10 @@ export default function SupportSectionClient({ data }: { data: SupportSectionDat
             </p>
           ) : null}
 
-          {selectedOption.link?.url ? (
+          {selectedOption.link ? (
             <div style={{ marginTop: 16 }}>
               <a
-                href={selectedOption.link.url}
+                href={selectedOption.link}
                 target="_blank"
                 rel="noreferrer"
                 style={{

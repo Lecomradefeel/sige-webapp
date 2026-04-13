@@ -4,37 +4,17 @@ export const SUPPORT_QUERY = `
       enabled
       title
       intro
-      maxItems
-      options {
-        id
-        title
-        excerpt
-        body
-        ctaLabel
-        priority
-        link {
-          url
-        }
-        image {
-          url
-          alt
-        }
-      }
     }
 
-    allSupportOptions(
-      filter: { is_enabled: { eq: true } }
-      orderBy: priority_ASC
-    ) {
+    allSupportOptions(orderBy: priority_ASC) {
       id
+      enabled
       title
       excerpt
       body
-      ctaLabel
+      cta_label
       priority
-      link {
-        url
-      }
+      link
       image {
         url
         alt
