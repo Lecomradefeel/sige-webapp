@@ -80,7 +80,10 @@ async function getSupportData(): Promise<SupportSectionData | null> {
     .sort((a, b) => (a.priority ?? 999) - (b.priority ?? 999));
 
   const maxItems = section?.maxItems ?? null;
-  const sliced = Number.isFinite(maxItems) && maxItems > 0 ? options.slice(0, maxItems) : options;
+  const safeMaxItems = typeof maxItems === "number" && Number.isFinite(maxItems) && maxItems > 0
+    ? maxItems
+    : null;
+  const sliced = safeMaxItems ? options.slice(0, safeMaxItems) : options;
 
   return {
     enabled,
