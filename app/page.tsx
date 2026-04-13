@@ -9,12 +9,19 @@ export default async function Home() {
   const eventsEnabled = process.env.EVENTS_ENABLED === "true";
 
   return (
-    <main style={{ maxWidth: 1120, margin: "0 auto", padding: "32px 20px" }}>
+    <main
+      id="home"
+      style={{ maxWidth: 1120, margin: "0 auto", padding: "32px 20px" }}
+    >
       <HeroSection eventsEnabled={eventsEnabled} />
 
-      <FeaturedSection />
+      <div id="in-evidenza">
+        <FeaturedSection />
+      </div>
 
-      <NewsletterBanner />
+      <div id="notizie">
+        <NewsletterBanner />
+      </div>
 
       <div id="partecipa">
         <ParticipateSection />
@@ -28,4 +35,3 @@ export default async function Home() {
     </main>
   );
 }
-

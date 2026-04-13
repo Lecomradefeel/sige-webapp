@@ -53,29 +53,32 @@ export default function RootLayout({
                 opacity: 0.9,
               }}
             >
-              <a href="/" style={{ color: "inherit", textDecoration: "none" }}>
+              <a
+                href="#home"
+                style={{ color: "inherit", textDecoration: "none" }}
+              >
                 Home
               </a>
               <a
-                href="/news"
+                href="#in-evidenza"
+                style={{ color: "inherit", textDecoration: "none" }}
+              >
+                In evidenza
+              </a>
+              <a
+                href="#notizie"
                 style={{ color: "inherit", textDecoration: "none" }}
               >
                 Notizie
               </a>
               <a
-                href="/agenda"
+                href="#partecipa"
                 style={{ color: "inherit", textDecoration: "none" }}
               >
                 Agenda
               </a>
               <a
-                href="/azioni"
-                style={{ color: "inherit", textDecoration: "none" }}
-              >
-                Azioni
-              </a>
-              <a
-                href="/sostieni"
+                href="#sostienici"
                 style={{
                   color: "#000",
                   background: "#fff",
@@ -85,7 +88,7 @@ export default function RootLayout({
                   fontWeight: 600,
                 }}
               >
-                Sostieni
+                Sostienici
               </a>
             </nav>
           </div>
