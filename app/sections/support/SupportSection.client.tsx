@@ -83,7 +83,7 @@ export default function SupportSectionClient({ data }: { data: SupportSectionDat
                 {opt.link ? (
                   <div style={{ marginTop: 12 }}>
                     <a
-                      href={opt.link}
+                      href={opt.link.url}
                       target="_blank"
                       rel="noreferrer"
                       onClick={(e) => e.stopPropagation()}
