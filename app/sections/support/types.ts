@@ -9,7 +9,6 @@ export type SupportOption = {
   image?: { url: string; alt?: string | null } | null;
 };
 
-
 export type SupportSectionData = {
   enabled: boolean;
   title?: string | null;
